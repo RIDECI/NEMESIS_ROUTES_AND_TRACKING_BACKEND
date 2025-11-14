@@ -226,11 +226,17 @@ Implementa los **detalles técnicos**: controladores REST, persistencia, configu
 
 ## 📊 Diagramas del Módulo
 
+### 🌐 Diagrama de Contexto
+![Diagrama de Contexto](docs/diagramaContexto.png)
+
 ### 🧩 Diagrama de Componentes Específico
 
-
+![Diagrama de Clases](docs/diagramaComponentes.png)
 
 ---
+
+### 🎯 Diagrama de Casos de Uso
+![Diagrama de Casos de Uso](docs/diagramaCasosUso.png)
 
 ### 🧬 Diagrama de Clases
 
