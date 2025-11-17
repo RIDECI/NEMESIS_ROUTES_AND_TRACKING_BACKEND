@@ -1,4 +1,4 @@
-package edu.dosw.rideci.NEMESIS_ROUTES_AND_TRACKING_BACKEND;
+package edu.dosw.rideci;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
