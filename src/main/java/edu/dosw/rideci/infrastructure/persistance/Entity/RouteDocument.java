@@ -1,5 +1,6 @@
 package edu.dosw.rideci.infrastructure.persistance.Entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,6 +20,8 @@ public class RouteDocument {
     private LocationDocument destiny;
 
     private double totalDistance;
+
+    private LocalDateTime departureDateAndTime;
 
     private List<PickupPointDocument> pickupPoints;
 

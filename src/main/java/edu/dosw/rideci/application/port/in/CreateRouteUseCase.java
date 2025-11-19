@@ -1,9 +1,9 @@
-package edu.dosw.rideci.application.port.out;
+package edu.dosw.rideci.application.port.in;
 
 import edu.dosw.rideci.application.dto.TravelCreatedEvent;
 import edu.dosw.rideci.domain.model.Route;
 
-public interface GeolocalizationRepositoryPort {
+public interface CreateRouteUseCase {
 
     Route createRoute(TravelCreatedEvent event);
 
