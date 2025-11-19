@@ -13,8 +13,8 @@ public class TravelCreatedEventListener {
 
     private final CreateRouteUseCase createRouteUseCase;
 
-    @RabbitListener(queues = "${rabbitmq.queues.travel-created}") // me toca poner este nombre en travel cuando publique
-                                                                  // la cola
+    @RabbitListener(queues = "geolocation.travel.created.queue") // me toca poner este nombre en travel cuando publique
+                                                                 // la cola
     public void handleTravelCreated(TravelCreatedEvent event) {
         createRouteUseCase.createRoute(event);
     }
