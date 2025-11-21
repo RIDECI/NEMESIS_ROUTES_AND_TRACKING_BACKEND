@@ -23,6 +23,6 @@ public class RouteDocument {
 
     private LocalDateTime departureDateAndTime;
 
-    private List<PickupPointDocument> pickupPoints;
+    // private List<PickupPointDocument> pickupPoints;
 
 }

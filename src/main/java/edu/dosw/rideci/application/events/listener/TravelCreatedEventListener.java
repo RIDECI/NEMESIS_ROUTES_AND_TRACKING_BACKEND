@@ -6,16 +6,19 @@ import org.springframework.stereotype.Component;
 import edu.dosw.rideci.application.dto.TravelCreatedEvent;
 import edu.dosw.rideci.application.port.in.CreateRouteUseCase;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class TravelCreatedEventListener {
 
     private final CreateRouteUseCase createRouteUseCase;
 
-    @RabbitListener(queues = "geolocation.travel.created.queue") // me toca poner este nombre en travel cuando publique
-                                                                 // la cola
+    @RabbitListener(queues = "geolocation.travel.created.queue")
     public void handleTravelCreated(TravelCreatedEvent event) {
+        System.out.println("!!! MENSAJE RECIBIDO EN GEOLOCALIZACIÓN !!!");
+        System.out.println("Datos del viaje: " + event.toString());
         createRouteUseCase.createRoute(event);
     }
 
