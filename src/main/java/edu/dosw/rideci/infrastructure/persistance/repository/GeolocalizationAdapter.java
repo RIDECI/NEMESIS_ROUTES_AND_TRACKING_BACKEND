@@ -1,8 +1,7 @@
 package edu.dosw.rideci.infrastructure.persistance.repository;
 
 import org.springframework.stereotype.Repository;
-
-import edu.dosw.rideci.application.dto.TravelCreatedEvent;
+import edu.dosw.rideci.application.events.command.CreateRouteCommand;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.infrastructure.persistance.Entity.RouteDocument;
@@ -17,7 +16,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     private final RouteMapper routeMapper;
 
     @Override
-    public Route createRoute(TravelCreatedEvent event) {
+    public Route createRoute(CreateRouteCommand event) {
 
         Route route = Route.builder()
                 .travelId(event.getTravelId())
