@@ -1,6 +1,7 @@
 package edu.dosw.rideci.infrastructure.persistance.Entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,15 +18,17 @@ public class LocationShareDocument {
     @Id
     private Long id;
 
-    private String trackingUrl;
-
     private Long userId;
 
     private Long travelId;
 
+    private List<String> emergencyContacts; 
+
     private LocalDateTime createdAt;
 
     private LocalDateTime expiresAt;
+
+    private String trackingUrl;
 
     private ShareStatus status;
 

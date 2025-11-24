@@ -1,6 +1,5 @@
 package edu.dosw.rideci.infrastructure.persistance.Entity;
 
-import java.time.LocalDateTime;
 
 import lombok.Builder;
 import lombok.Data;
@@ -9,10 +8,12 @@ import lombok.Data;
 @Builder
 public class PickupPointDocument {
 
-    private LocationDocument location;
-
     private Long passengerId;
 
-    private LocalDateTime estimatedTimeToPick;
+    private double distanceFromPreviousStop;
+
+    private LocationDocument passengerLocation;
+
+    private int order;
 
 }

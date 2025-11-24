@@ -9,10 +9,20 @@ import lombok.Data;
 @Builder
 public class LocationDocument {
 
+    private double latitude;
+    
     private double longitude;
 
-    private double latitude;
+    private double altitude;
 
     private LocalDateTime timeStamp;
+
+    private double speed;
+
+    private String placeId;
+
+    private String address;
+
+    private double accuracy;
 
 }

@@ -20,12 +20,14 @@ public class TravelTracking {
 
     private Location lastLocation;
 
+    private LocalDateTime lastUpdate;
+
     private List<Location> locationHistory;
 
     private double distanceTraveled;
 
     private double remainingDistance;
 
-    private LocalDateTime lastUpdate;
+    private TrackingConfiguration trackingConfiguration;
 
 }

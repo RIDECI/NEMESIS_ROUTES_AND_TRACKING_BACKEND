@@ -1,6 +1,7 @@
 package edu.dosw.rideci.domain.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,10 +20,21 @@ public class Route {
 
     private Location origin;
 
-    private Location destiny;
+    private Location destination;
 
     private double totalDistance;
 
+    private int estimatedTime;
+
+    private String polyline;
+
     private LocalDateTime departureDateAndTime;
+
+    private List<PickUpPoint> pickUpPoints;
+
+    private LocationShare locationShare;
+
+    private TravelTracking travelTracking;
+
 
 }

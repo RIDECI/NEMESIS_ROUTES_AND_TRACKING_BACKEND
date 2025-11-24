@@ -1,6 +1,7 @@
 package edu.dosw.rideci.infrastructure.persistance.Entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,10 +17,14 @@ public class TravelTrackingDocument {
 
     private LocationDocument lastLocation;
 
+    private LocalDateTime lastUpdate;
+
+    private List<LocationDocument> locationHistory;
+
     private double distanceTraveled;
 
     private double remainingDistance;
 
-    private LocalDateTime lastUpdate;
 
+    private TrackingConfigurationDocument trackingConfiguration;
 }

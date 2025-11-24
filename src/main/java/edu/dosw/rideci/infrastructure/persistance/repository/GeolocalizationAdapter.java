@@ -21,7 +21,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
         Route route = Route.builder()
                 .travelId(event.getTravelId())
                 .origin(event.getOrigin())
-                .destiny(event.getDestiny())
+                .destination(event.getDestiny())
                 .departureDateAndTime(event.getDepartureDateAndTime())
                 .totalDistance(0.0) // toca calcularla, dos formas de hacerlo
                 .build();

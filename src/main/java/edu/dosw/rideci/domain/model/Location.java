@@ -19,6 +19,18 @@ public class Location {
 
     private double longitude;
 
+    private double altitude;
+
     private LocalDateTime timeStamp;
+
+    private double speed;
+
+    private double heading;
+
+    private String placeId;
+
+    private String address;
+
+    private double accuracy;
 
 }

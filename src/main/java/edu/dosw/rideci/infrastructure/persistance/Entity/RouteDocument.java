@@ -17,12 +17,18 @@ public class RouteDocument {
 
     private LocationDocument origin;
 
-    private LocationDocument destiny;
+    private LocationDocument destination;
 
     private double totalDistance;
 
+    private String polyline;
+
     private LocalDateTime departureDateAndTime;
 
-    // private List<PickupPointDocument> pickupPoints;
+    private List<PickupPointDocument> pickupPoints;
+
+    private LocationShareDocument locationShare;
+
+    private TravelTrackingDocument travelTracking;
 
 }
