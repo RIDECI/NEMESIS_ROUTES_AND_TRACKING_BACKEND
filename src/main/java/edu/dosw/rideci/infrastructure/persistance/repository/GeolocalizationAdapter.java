@@ -41,34 +41,35 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     }
 
     @Override
-    public Route getRouteInformation(Long routeId){
+    public Route getRouteInformation(Long routeId) {
 
-        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+        RouteDocument route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
 
         return routeMapper.toDomain(route);
 
     }
 
     @Override
-    public List<PickUpPoint> getPickUpPoints(Long routeId){
+    public List<PickUpPoint> getPickUpPoints(Long routeId) {
 
-        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route Not Found with id: {id}"));
+        RouteDocument route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new RouteNotFoundException("Route Not Found with id: {id}"));
 
-        route.getPickupPoints();
-
-        return routeMapper.toPickUpPointDomainList(route.getPickupPoints());
+        return routeMapper.toPickUpPointDomainList(route.getPickUpPoints());
     }
 
     @Override
-    public Location getRealTimePosition(Long routeId){
+    public Location getRealTimePosition(Long routeId) {
 
-        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+        RouteDocument route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
 
         return null;
     }
 
     @Override
-    public TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval){
+    public TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval) {
         return null;
     }
 
