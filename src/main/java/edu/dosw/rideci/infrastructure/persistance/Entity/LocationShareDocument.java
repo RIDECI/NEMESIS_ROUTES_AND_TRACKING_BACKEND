@@ -22,7 +22,7 @@ public class LocationShareDocument {
 
     private Long travelId;
 
-    private List<String> emergencyContacts; 
+    private List<String> emergencyContacts;
 
     private LocalDateTime createdAt;
 
@@ -30,6 +30,6 @@ public class LocationShareDocument {
 
     private String trackingUrl;
 
-    private ShareStatus status;
+    private ShareStatus shareStatus;
 
 }

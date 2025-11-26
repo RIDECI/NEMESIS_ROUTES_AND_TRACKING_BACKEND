@@ -10,10 +10,8 @@ import lombok.Data;
 public class LocationDocument {
 
     private double latitude;
-    
-    private double longitude;
 
-    private double altitude;
+    private double longitude;
 
     private LocalDateTime timeStamp;
 
