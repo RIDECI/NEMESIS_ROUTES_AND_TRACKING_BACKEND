@@ -17,7 +17,7 @@ jobs:
           distribution: "microsoft"
 
       - name: Build with Maven
-        run: mvn clean package
+        run: mvn clean package -DskipTests
 
       - uses: actions/upload-artifact@v4
         with:
@@ -36,6 +36,13 @@ jobs:
 
       - name: Run tests and verify
         run: mvn clean verify
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
+          RABBIT_PORT: ${{ secrets.RABBIT_PORT }}
+          RABBIT_USER: ${{ secrets.RABBIT_USER }}
+          RABBIT_PASSWORD: ${{ secrets.RABBIT_PASSWORD }}
+          RABBIT_VHOST: ${{ secrets.RABBIT_VHOST }}
 
       - name: Generate Jacoco Report
         run: mvn jacoco:report

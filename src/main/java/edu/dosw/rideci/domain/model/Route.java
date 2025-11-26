@@ -36,5 +36,4 @@ public class Route {
 
     private TravelTracking travelTracking;
 
-
 }

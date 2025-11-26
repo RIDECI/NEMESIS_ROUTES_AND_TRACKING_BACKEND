@@ -21,11 +21,13 @@ public class RouteDocument {
 
     private double totalDistance;
 
+    private int estimatedTime;
+
     private String polyline;
 
     private LocalDateTime departureDateAndTime;
 
-    private List<PickupPointDocument> pickupPoints;
+    private List<PickupPointDocument> pickUpPoints;
 
     private LocationShareDocument locationShare;
 
