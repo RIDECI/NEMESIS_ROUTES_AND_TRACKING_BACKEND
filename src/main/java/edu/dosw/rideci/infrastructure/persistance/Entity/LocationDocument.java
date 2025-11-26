@@ -13,8 +13,6 @@ public class LocationDocument {
     
     private double longitude;
 
-    private double altitude;
-
     private LocalDateTime timeStamp;
 
     private double speed;

@@ -25,6 +25,5 @@ public class TravelTrackingDocument {
 
     private double remainingDistance;
 
-
     private TrackingConfigurationDocument trackingConfiguration;
 }

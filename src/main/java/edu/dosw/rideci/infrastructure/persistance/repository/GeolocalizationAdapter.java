@@ -1,12 +1,18 @@
 package edu.dosw.rideci.infrastructure.persistance.repository;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import edu.dosw.rideci.application.events.command.CreateRouteCommand;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.domain.model.Route;
+import edu.dosw.rideci.domain.model.TrackingConfiguration;
+import edu.dosw.rideci.domain.model.Location;
+import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.infrastructure.persistance.Entity.RouteDocument;
 import edu.dosw.rideci.infrastructure.persistance.mapper.RouteMapper;
 import lombok.RequiredArgsConstructor;
+import edu.dosw.rideci.exceptions.RouteNotFoundException;
 
 @RequiredArgsConstructor
 @Repository
@@ -32,6 +38,38 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
 
         return routeMapper.toDomain(savedRoute);
 
+    }
+
+    @Override
+    public Route getRouteInformation(Long routeId){
+
+        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+
+        return routeMapper.toDomain(route);
+
+    }
+
+    @Override
+    public List<PickUpPoint> getPickUpPoints(Long routeId){
+
+        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route Not Found with id: {id}"));
+
+        route.getPickupPoints();
+
+        return routeMapper.toPickUpPointDomainList(route.getPickupPoints());
+    }
+
+    @Override
+    public Location getRealTimePosition(Long routeId){
+
+        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+
+        return null;
+    }
+
+    @Override
+    public TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval){
+        return null;
     }
 
 }
