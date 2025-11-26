@@ -9,7 +9,9 @@ import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.domain.model.TrackingConfiguration;
 import edu.dosw.rideci.domain.model.Location;
 import edu.dosw.rideci.domain.model.PickUpPoint;
+import edu.dosw.rideci.infrastructure.persistance.Entity.LocationDocument;
 import edu.dosw.rideci.infrastructure.persistance.Entity.RouteDocument;
+import edu.dosw.rideci.infrastructure.persistance.Entity.TravelTrackingDocument;
 import edu.dosw.rideci.infrastructure.persistance.mapper.RouteMapper;
 import lombok.RequiredArgsConstructor;
 import edu.dosw.rideci.exceptions.RouteNotFoundException;
@@ -63,13 +65,19 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     public Location getRealTimePosition(Long routeId){
 
         RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+        
+        LocationDocument actualLocation = route.getTravelTracking().getLastLocation();
 
-        return null;
+        return routeMapper.toLocationDomain(actualLocation);
+        
     }
 
     @Override
-    public TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval){
-        return null;
+    public void updateIntervalSeconds(Long routeId, int newInterval){
+        
+        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+        
+        route.getTravelTracking().getTrackingConfiguration().setUpdateIntervalSeconds(newInterval);
     }
 
 }

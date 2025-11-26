@@ -4,6 +4,6 @@ import edu.dosw.rideci.domain.model.TrackingConfiguration;
 
 public interface UpdateConfigurableIntervalUseCase {
     
-    TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval);
+    void updateIntervalSeconds(Long routeId, int newInterval);
 
 }

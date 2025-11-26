@@ -47,8 +47,8 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
     }
 
     @Override
-    public TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval){
-        return geolocalizationRepositoryPort.updateIntervalSeconds(routeId, newInterval);
+    public void updateIntervalSeconds(Long routeId, int newInterval){
+        geolocalizationRepositoryPort.updateIntervalSeconds(routeId, newInterval);
     }
 
 }
