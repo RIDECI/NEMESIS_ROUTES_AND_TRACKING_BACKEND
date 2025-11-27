@@ -11,17 +11,18 @@ This module is designed to allow real-time visualization of the vehicle's route 
 
 
 ## 📑 Content Table
-1. [Project Architecture](#project-architecture)
+
+1. [Project Architecture](#-project-architecture)
     - [Hexagonal Structure](#-clean---hexagonal-structure)
-2. [API Documentation](#-api-endpoints--data)
-    - [Endpoints](#endpoints)
-    - [Data Models (In/Out)](#data-models)
-3. [Microservices Integration](#-connections-with-other-microservices)
-4. [Technologies](#-technologies)
-5. [Branch Strategy](#-branching-strategy--workflow)
-6. [System Architecture & Design](#-system-architecture--design) 
-7. [Getting Started](#-getting-started) 
-8. [Testing](#testing)
+2. [API Documentation](#-api-endpoints)
+    - [Endpoints](#-api-endpoints)
+3. [Input & Output Data](#-input--output-data)
+4. [Microservices Integration](#-connections-with-other-microservices)
+5. [Technologies](#-technologies)
+6. [Branch Strategy](#-branches-strategy--structure)
+7. [System Architecture & Design](#-system-architecture--design) 
+8. [Getting Started](#-getting-started) 
+9. [Testing](#-testing)
 
 ---
 ## 🏛️ Project Architecture
