@@ -16,9 +16,9 @@ This module is designed to allow real-time visualization of the vehicle's route 
     - [Hexagonal Structure](#-clean---hexagonal-structure)
 2. [API Documentation](#-api-endpoints)
     - [Endpoints](#-api-endpoints)
-3. [Input & Output Data](#-input--output-data)
+3. [Input & Output Data](#input-and-output-data)
 4. [Microservices Integration](#-connections-with-other-microservices)
-5. [Technologies](#-technologies)
+5. [Technologies](#technologies)
 6. [Branch Strategy](#-branches-strategy--structure)
 7. [System Architecture & Design](#-system-architecture--design) 
 8. [Getting Started](#-getting-started) 
@@ -104,7 +104,7 @@ Common status codes returned by the API.
 | `404` | **Not Found** | Route or Trip ID does not exist. |
 | `500` | **Internal Server Error** | Unexpected error (e.g., Google Maps API failure).
 
-# Input & Output Data
+# Input and Output Data
 
 Data information per functionability
 
@@ -115,7 +115,7 @@ This module does not work alone. It interacts with the RideCi Ecosystem via REST
 
 1. Travel Management Module: Receives information about the travel.
 
-# 🛠️ Technologies
+# Technologies
 
 The following technologies were used to build and deploy this module:
 
