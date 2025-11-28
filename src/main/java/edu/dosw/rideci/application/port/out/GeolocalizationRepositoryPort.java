@@ -20,4 +20,6 @@ public interface GeolocalizationRepositoryPort {
     Location getRealTimePosition(Long routeId);
 
     void updateIntervalSeconds(Long routeId, int newInterval);
+
+    Location updateLocation(Long routeId, Location newLocation);
 }

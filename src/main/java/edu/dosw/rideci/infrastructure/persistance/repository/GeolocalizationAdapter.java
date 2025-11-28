@@ -1,9 +1,11 @@
 package edu.dosw.rideci.infrastructure.persistance.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 import edu.dosw.rideci.application.events.command.CreateRouteCommand;
+import edu.dosw.rideci.application.port.in.MapsServicePort;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.domain.model.TrackingConfiguration;
@@ -15,6 +17,7 @@ import edu.dosw.rideci.infrastructure.persistance.Entity.TravelTrackingDocument;
 import edu.dosw.rideci.infrastructure.persistance.mapper.RouteMapper;
 import lombok.RequiredArgsConstructor;
 import edu.dosw.rideci.exceptions.RouteNotFoundException;
+import edu.dosw.rideci.exceptions.ExternalServiceException;
 
 @RequiredArgsConstructor
 @Repository
@@ -22,16 +25,20 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
 
     private final RouteRepository routeRepository;
     private final RouteMapper routeMapper;
+    private final MapsServicePort mapsServicePort;
 
     @Override
     public Route createRoute(CreateRouteCommand event) {
+        Route googleData = mapsServicePort.calculateRoute(event.getOrigin(), event.getDestiny());
 
         Route route = Route.builder()
                 .travelId(event.getTravelId())
                 .origin(event.getOrigin())
                 .destination(event.getDestiny())
                 .departureDateAndTime(event.getDepartureDateAndTime())
-                .totalDistance(0.0) // toca calcularla, dos formas de hacerlo
+                .totalDistance(googleData.getTotalDistance())
+                .estimatedTime(googleData.getEstimatedTime())
+                .polyline(googleData.getPolyline())
                 .build();
 
         RouteDocument createdRoute = routeMapper.toDocument(route);
@@ -64,9 +71,10 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     @Override
     public Location getRealTimePosition(Long routeId){
 
-        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+        RouteDocument actualRoute = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route with id: {id} was not found"));
         
-        LocationDocument actualLocation = route.getTravelTracking().getLastLocation();
+        LocationDocument actualLocation = actualRoute.getTravelTracking().getLastLocation();
+
 
         return routeMapper.toLocationDomain(actualLocation);
         
@@ -75,9 +83,43 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     @Override
     public void updateIntervalSeconds(Long routeId, int newInterval){
         
-        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route with id: {id} was not found"));
         
         route.getTravelTracking().getTrackingConfiguration().setUpdateIntervalSeconds(newInterval);
+    }
+
+    @Override
+    public Location updateLocation(Long routeId, Location newLocation){
+        
+        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route with id: {id} was not found"));
+
+        LocationDocument actualLocation = route.getTravelTracking().getLastLocation();
+
+        if (actualLocation.getAccuracy() > 50.0){
+            return routeMapper.toLocationDomain(actualLocation);
+        }
+
+        Location updatedLocation = Location.builder()
+            .latitude(newLocation.getLatitude())
+            .longitude(newLocation.getLongitude())
+            .timeStamp(LocalDateTime.now())
+            .speed(newLocation.getSpeed())
+            .heading(newLocation.getHeading())
+            .placeId(newLocation.getPlaceId())
+            .address(newLocation.getAddress())
+            .accuracy(newLocation.getAccuracy())
+            .build();
+
+        route.getTravelTracking().getLocationHistory().add(actualLocation);
+        route.getTravelTracking().setLastLocation(actualLocation);
+        route.getTravelTracking().setLastUpdate(LocalDateTime.now());
+
+        LocationDocument updatedLocationDocument = routeMapper.toLocationDocumentEmbeddable(updatedLocation);
+
+        routeRepository.save(route);
+
+        return updatedLocation;
+
     }
 
 }
