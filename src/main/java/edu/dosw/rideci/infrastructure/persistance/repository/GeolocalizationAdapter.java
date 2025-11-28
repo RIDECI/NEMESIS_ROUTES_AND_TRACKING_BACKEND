@@ -104,7 +104,6 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
             .longitude(newLocation.getLongitude())
             .timeStamp(LocalDateTime.now())
             .speed(newLocation.getSpeed())
-            .heading(newLocation.getHeading())
             .placeId(newLocation.getPlaceId())
             .address(newLocation.getAddress())
             .accuracy(newLocation.getAccuracy())
