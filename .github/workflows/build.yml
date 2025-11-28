@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           java-version: "17"
@@ -29,6 +30,7 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           java-version: "17"
@@ -36,13 +38,6 @@ jobs:
 
       - name: Run tests and verify
         run: mvn clean verify
-        env:
-          MONGO_URL: ${{ secrets.MONGO_URL }}
-          RABBIT_HOST: ${{ secrets.RABBIT_HOST }}
-          RABBIT_PORT: ${{ secrets.RABBIT_PORT }}
-          RABBIT_USER: ${{ secrets.RABBIT_USER }}
-          RABBIT_PASSWORD: ${{ secrets.RABBIT_PASSWORD }}
-          RABBIT_VHOST: ${{ secrets.RABBIT_VHOST }}
 
       - name: Generate Jacoco Report
         run: mvn jacoco:report
