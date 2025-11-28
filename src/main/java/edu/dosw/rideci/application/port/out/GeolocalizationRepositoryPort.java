@@ -19,5 +19,7 @@ public interface GeolocalizationRepositoryPort {
 
     Location getRealTimePosition(Long routeId);
 
-    TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval);
+    void updateIntervalSeconds(Long routeId, int newInterval);
+
+    Location updateLocation(Long routeId, Location newLocation);
 }
