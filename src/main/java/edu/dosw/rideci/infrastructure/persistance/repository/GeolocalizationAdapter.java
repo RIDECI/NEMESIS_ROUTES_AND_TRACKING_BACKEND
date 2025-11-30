@@ -20,12 +20,14 @@ import edu.dosw.rideci.infrastructure.persistance.Entity.RouteDocument;
 import edu.dosw.rideci.infrastructure.persistance.Entity.TravelTrackingDocument;
 import edu.dosw.rideci.infrastructure.persistance.mapper.RouteMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import edu.dosw.rideci.exceptions.RouteNotFoundException;
 import edu.dosw.rideci.exceptions.TimeOutException;
 import edu.dosw.rideci.exceptions.ExternalServiceException;
 
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
 
     private final RouteRepository routeRepository;
@@ -35,12 +37,15 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
 
     @Override
     public Route createRoute(CreateRouteCommand event) {
+        System.out.println(event.getOrigin().getDirection());
+        System.out.println(event.getDestiny().getDirection());
+
         Route googleData = mapsServicePort.calculateRoute(event.getOrigin(), event.getDestiny());
 
         Route route = Route.builder()
                 .travelId(event.getTravelId())
                 .origin(event.getOrigin())
-                .destination(event.getDestiny())
+                .destiny(event.getDestiny())
                 .totalDistance(googleData.getTotalDistance())
                 .estimatedTime(googleData.getEstimatedTime())
                 .polyline(googleData.getPolyline())
@@ -64,13 +69,13 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
             throw new TimeOutException("Cannot edit after passed 30 minutes before the travel start");
         }
 
-        boolean locationChanged = !route.getOrigin().equals(newRoute.getOrigin()) || !route.getDestination().equals(newRoute.getDestination());
+        boolean locationChanged = !route.getOrigin().equals(newRoute.getOrigin()) || !route.getDestiny().equals(newRoute.getDestiny());
 
         if(locationChanged){
-            Route googleData = mapsServicePort.calculateRoute(newRoute.getOrigin(), newRoute.getDestination());
+            Route googleData = mapsServicePort.calculateRoute(newRoute.getOrigin(), newRoute.getDestiny());
             
             route.setOrigin(newRoute.getOrigin());
-            route.setDestination(newRoute.getDestination());
+            route.setDestiny(newRoute.getDestiny());
             route.setTotalDistance(googleData.getTotalDistance()); 
             route.setEstimatedTime(googleData.getEstimatedTime());
             route.setPolyline(googleData.getPolyline());
@@ -119,7 +124,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
             .timeStamp(LocalDateTime.now())
             .speed(newLocation.getSpeed())
             .placeId(newLocation.getPlaceId())
-            .address(newLocation.getAddress())
+            .direction(newLocation.getDirection())
             .accuracy(newLocation.getAccuracy())
             .build();
 
@@ -146,9 +151,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
         if(LocalDateTime.now().isAfter(route.getDepartureDateAndTime().minusMinutes(30))){
             throw new TimeOutException("Cannot edit after passed 30 minutes before the travel start");
         }
-            
-        Route recalculatedRoute = calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(), route.getDestination(), route.getPickUpPoints());
-        
+                    
         PickUpPoint newPoint = PickUpPoint.builder()
             .passengerId(newPickUpPoint.getPassengerId())
             .distanceFromPreviousStop(newPickUpPoint.getDistanceFromPreviousStop()) 
@@ -159,6 +162,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
 
         route.getPickUpPoints().add(newPoint);
 
+        Route recalculatedRoute = calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(), route.getDestiny(), route.getPickUpPoints());
 
         route.setTotalDistance(recalculatedRoute.getTotalDistance());
         route.setEstimatedTime(recalculatedRoute.getEstimatedTime());
@@ -172,9 +176,20 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     @Override
     public PickUpPoint updatePickUpPoint(String routeId, PickUpPoint updatedPickUpPoint){
 
-        RouteDocument route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route with id: {id} was not found"));
+        RouteDocument DocRoute = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException("Route with id: {id} was not found"));
+
+        Route route = routeMapper.toDomain(DocRoute);
+
+        if(LocalDateTime.now().isAfter(route.getDepartureDateAndTime().minusMinutes(30))){
+            throw new TimeOutException("Cannot edit after passed 30 minutes before the travel start");
+        }
+
+        Route recalculatedRoute = calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(), route.getDestiny(), route.getPickUpPoints());
+        
+        //PickUpPoint pickUpPoint = route.getPickUpPoints()
 
         return null;
+    
     }
 
     @Override

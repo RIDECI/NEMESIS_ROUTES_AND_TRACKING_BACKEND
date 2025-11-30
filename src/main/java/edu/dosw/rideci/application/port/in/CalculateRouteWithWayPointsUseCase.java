@@ -9,6 +9,6 @@ import edu.dosw.rideci.infrastructure.persistance.Entity.LocationDocument;
 
 public interface CalculateRouteWithWayPointsUseCase {
 
-    Route calculateRouteWithWayPoints(Location origin, Location destination, List<PickUpPoint> pickUpPoints);
+    Route calculateRouteWithWayPoints(Location origin, Location destiny, List<PickUpPoint> pickUpPoints);
 
 }

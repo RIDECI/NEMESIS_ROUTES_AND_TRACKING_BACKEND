@@ -2,6 +2,7 @@ package edu.dosw.rideci.infrastructure.persistance.repository;
 
 import java.util.List;
 import org.springframework.stereotype.Repository;
+import lombok.extern.slf4j.Slf4j;
 
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
@@ -27,17 +28,24 @@ import lombok.Setter;
 
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
 
     private final GoogleMapsConfig googleMapsConfig;
+    private final GeoApiContext geoApiContext;
 
     @Override
-    public Route calculateRoute(Location origin, Location destination){
+    public Route calculateRoute(Location origin, Location destiny){
+
+        if(destiny.getDirection() == null){
+            throw new IllegalArgumentException("Direction cannot be null");
+        }
+
         try {
 
-            DirectionsResult result = DirectionsApi.newRequest(googleMapsConfig.geoApiContext())
-                .origin(origin.getAddress())
-                .destination(destination.getAddress())
+            DirectionsResult result = DirectionsApi.newRequest(geoApiContext)
+                .origin(origin.getDirection())
+                .destination(destiny.getDirection())
                 .mode(TravelMode.DRIVING)
                 .await();
 
@@ -53,7 +61,8 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
             }
 
         } catch (Exception e) {
-            throw new ExternalServiceException("Error connecting with Google Maps");
+            log.error("Google Maps calculateRoute failed for origin={} destiny={}", origin, destiny, e);
+            throw new ExternalServiceException("Error connecting with Google Maps", e);
         }
 
         return null;
@@ -65,16 +74,16 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
     }
 
     @Override
-    public Route calculateRouteWithWayPoints(Location origin, Location destination, List<PickUpPoint> pickUpPoints){
+    public Route calculateRouteWithWayPoints(Location origin, Location destiny, List<PickUpPoint> pickUpPoints){
         try{
 
             String[] waypointArray = pickUpPoints.stream()
-                .map(p -> p.getPassengerLocation().getAddress())
+                .map(p -> p.getPassengerLocation().getDirection())
                 .toArray(String [] :: new);
 
             DirectionsResult result = DirectionsApi.newRequest(googleMapsConfig.geoApiContext())
-                .origin(origin.getAddress())
-                .destination(destination.getAddress())
+                .origin(origin.getDirection())
+                .destination(destiny.getDirection())
                 .mode(TravelMode.DRIVING)
                 .waypoints(waypointArray)
                 .optimizeWaypoints(true)
@@ -110,7 +119,8 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
                     .build();
             }
         } catch (Exception e){
-            throw new ExternalServiceException("Error connecting with Google Maps");
+            log.error("Google Maps calculateRouteWithWayPoints failed origin={} destiny={} waypoints={} ", origin, destiny, pickUpPoints, e);
+            throw new ExternalServiceException("Error connecting with Google Maps", e);
         }
         return null;
     }

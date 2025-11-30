@@ -21,8 +21,8 @@ public class GoogleMapsService implements MapsServicePort, RecalculateETA, Calcu
     private final GoogleMapsRepositoryPort googleMapsRepositoryPort;
 
     @Override
-    public Route calculateRoute(Location origin, Location destination){
-        return googleMapsRepositoryPort.calculateRoute(origin, destination);
+    public Route calculateRoute(Location origin, Location destiny){
+        return googleMapsRepositoryPort.calculateRoute(origin, destiny);
     }
 
     @Override
@@ -31,8 +31,8 @@ public class GoogleMapsService implements MapsServicePort, RecalculateETA, Calcu
     }
 
     @Override
-    public Route calculateRouteWithWayPoints(Location origin, Location destination, List<PickUpPoint> pickUpPoints){
-        return googleMapsRepositoryPort.calculateRouteWithWayPoints(origin, destination, pickUpPoints);
+    public Route calculateRouteWithWayPoints(Location origin, Location destiny, List<PickUpPoint> pickUpPoints){
+        return googleMapsRepositoryPort.calculateRouteWithWayPoints(origin, destiny, pickUpPoints);
     }
 
 }

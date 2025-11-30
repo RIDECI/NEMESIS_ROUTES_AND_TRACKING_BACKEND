@@ -8,10 +8,10 @@ import edu.dosw.rideci.domain.model.Route;
 
 public interface GoogleMapsRepositoryPort {
 
-    Route calculateRoute(Location origin, Location destination);
+    Route calculateRoute(Location origin, Location destiny);
 
     Long recalculateETA(Long newETA);
 
-    Route calculateRouteWithWayPoints(Location origin, Location destination, List<PickUpPoint> pickUpPoints);
+    Route calculateRouteWithWayPoints(Location origin, Location destiny, List<PickUpPoint> pickUpPoints);
 
 }

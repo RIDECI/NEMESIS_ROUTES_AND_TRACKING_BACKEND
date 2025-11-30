@@ -22,7 +22,7 @@ public class Route {
 
     private Location origin;
 
-    private Location destination;
+    private Location destiny;
 
     private double totalDistance;
 

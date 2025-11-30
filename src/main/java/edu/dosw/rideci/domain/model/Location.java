@@ -25,7 +25,7 @@ public class Location {
 
     private String placeId;
 
-    private String address;
+    private String direction;
 
     private double accuracy;
 
