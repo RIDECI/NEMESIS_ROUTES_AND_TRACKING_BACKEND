@@ -15,9 +15,8 @@ public class GoogleMapsService implements MapsServicePort {
     private final GoogleMapsAdapter googleMapsAdapter;
 
     @Override
-    public Route calculateRoute(Location origin, Location destination){
+    public Route calculateRoute(Location origin, Location destination) {
         return googleMapsAdapter.calculateRoute(origin, destination);
     }
 
-    
 }
