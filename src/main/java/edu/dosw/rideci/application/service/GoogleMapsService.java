@@ -1,22 +1,4 @@
 package edu.dosw.rideci.application.service;
 
-import org.springframework.stereotype.Service;
-
-import edu.dosw.rideci.application.port.in.MapsServicePort;
-import edu.dosw.rideci.domain.model.Location;
-import edu.dosw.rideci.domain.model.Route;
-import edu.dosw.rideci.infrastructure.persistance.repository.GoogleMapsAdapter;
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
-@Service
-public class GoogleMapsService implements MapsServicePort {
-
-    private final GoogleMapsAdapter googleMapsAdapter;
-
-    @Override
-    public Route calculateRoute(Location origin, Location destination) {
-        return googleMapsAdapter.calculateRoute(origin, destination);
-    }
-
-}
+// CLASE ELIMINADA: Causaba conflicto de beans duplicados
+// GoogleMapsAdapter ahora es @Service y se usa directamente

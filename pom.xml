@@ -74,8 +74,8 @@
 			<version>5.27.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.maps</groupId>
-			<artifactId>google-maps-services</artifactId>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdaps-services</artifactId>
 			<version>2.2.0</version>
 		</dependency>
 		<dependency>
@@ -83,9 +83,6 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.7.0</version>
 		</dependency>
-
-	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
