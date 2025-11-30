@@ -4,6 +4,6 @@ import edu.dosw.rideci.domain.model.Location;
 
 public interface UpdateLocationUseCase {
 
-    Location updateLocation(Long routeId, Location newLocation);
-    
+    Location updateLocation(String routeId, Location newLocation);
+
 }

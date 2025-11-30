@@ -19,14 +19,14 @@ import edu.dosw.rideci.application.port.in.UpdatePickUpPointUseCase;
 import edu.dosw.rideci.application.port.in.UpdateRouteUseCase;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.domain.model.Route;
-import edu.dosw.rideci.domain.model.TrackingConfiguration;
-import edu.dosw.rideci.infrastructure.persistance.repository.GoogleMapsAdapter;
 import edu.dosw.rideci.domain.model.Location;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class GeolocalizationService implements CreateRouteUseCase, GetRouteInformationUseCase, GetRealTimePositionUseCase, GetPickUpPointsUseCase, UpdateConfigurableIntervalUseCase, UpdateLocationUseCase, UpdateRouteUseCase, AddPickUpPointUseCase, UpdatePickUpPointUseCase {
+public class GeolocalizationService implements CreateRouteUseCase, GetRouteInformationUseCase,
+        GetRealTimePositionUseCase, GetPickUpPointsUseCase, UpdateConfigurableIntervalUseCase,
+        UpdateLocationUseCase, UpdateRouteUseCase, AddPickUpPointUseCase, UpdatePickUpPointUseCase {
 
     private final GeolocalizationRepositoryPort geolocalizationRepositoryPort;
 
@@ -36,43 +36,41 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
     }
 
     @Override
-    public Route updateRoute(Long routeId, Route newRoute){
+    public Route updateRoute(String routeId, Route newRoute){
         return geolocalizationRepositoryPort.updateRoute(routeId, newRoute);
     }
 
     @Override
-    public Route getRouteInformation(Long routeId){
+    public Route getRouteInformation(String routeId){
         return geolocalizationRepositoryPort.getRouteInformation(routeId);
     }
 
     @Override
-    public List<PickUpPoint> getPickUpPoints(Long routeId){
+    public List<PickUpPoint> getPickUpPoints(String routeId) {
         return geolocalizationRepositoryPort.getPickUpPoints(routeId);
     }
 
-    
     @Override
-    public Location getRealTimePosition(Long routeId){
+    public Location getRealTimePosition(String routeId) {
         return geolocalizationRepositoryPort.getRealTimePosition(routeId);
     }
 
-    @Override
-    public void updateIntervalSeconds(Long routeId, int newInterval){
+    public void updateIntervalSeconds(String routeId, int newInterval) {
         geolocalizationRepositoryPort.updateIntervalSeconds(routeId, newInterval);
     }
 
     @Override
-    public Location updateLocation(Long routeId, Location newLocation){
+    public Location updateLocation(String routeId, Location newLocation) {
         return geolocalizationRepositoryPort.updateLocation(routeId, newLocation);
     }
 
     @Override 
-    public PickUpPoint addPickUpPoint(Long routeId, PickUpPoint newPickUpPoint){
+    public PickUpPoint addPickUpPoint(String routeId, PickUpPoint newPickUpPoint){
         return geolocalizationRepositoryPort.addPickUpPoint(routeId, newPickUpPoint);
     }
 
     @Override
-    public PickUpPoint updatePickUpPoint(Long routeId, PickUpPoint updatedPickUpPoint){
+    public PickUpPoint updatePickUpPoint(String routeId, PickUpPoint updatedPickUpPoint){
         return geolocalizationRepositoryPort.updatePickUpPoint(routeId, updatedPickUpPoint);
     }
 

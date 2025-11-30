@@ -16,7 +16,9 @@ import lombok.Setter;
 @Builder
 public class Route {
 
-    private Long travelId;
+    private String id;
+
+    private String travelId;
 
     private Location origin;
 
@@ -35,6 +37,5 @@ public class Route {
     private LocationShare locationShare;
 
     private TravelTracking travelTracking;
-
 
 }

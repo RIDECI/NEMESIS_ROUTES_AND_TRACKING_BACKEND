@@ -1,7 +1,6 @@
 package edu.dosw.rideci.infrastructure.persistance.repository;
 
 import java.util.List;
-
 import org.springframework.stereotype.Repository;
 
 import com.google.maps.DirectionsApi;
@@ -42,15 +41,15 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
                 .mode(TravelMode.DRIVING)
                 .await();
 
-            if (result.routes.length > 0){
+            if (result.routes.length > 0) {
                 DirectionsRoute route = result.routes[0];
                 DirectionsLeg leg = route.legs[0];
 
                 return Route.builder()
-                    .totalDistance(leg.distance.inMeters)
-                    .estimatedTime(leg.duration.inSeconds)
-                    .polyline(route.overviewPolyline.getEncodedPath())
-                    .build();
+                        .totalDistance(leg.distance.inMeters)
+                        .estimatedTime(leg.duration.inSeconds)
+                        .polyline(route.overviewPolyline.getEncodedPath())
+                        .build();
             }
 
         } catch (Exception e) {

@@ -4,6 +4,6 @@ import edu.dosw.rideci.domain.model.PickUpPoint;
 
 public interface AddPickUpPointUseCase {
 
-    PickUpPoint addPickUpPoint(Long routeId, PickUpPoint newPickUpPoint);
+    PickUpPoint addPickUpPoint(String routeId, PickUpPoint newPickUpPoint);
 
 }
