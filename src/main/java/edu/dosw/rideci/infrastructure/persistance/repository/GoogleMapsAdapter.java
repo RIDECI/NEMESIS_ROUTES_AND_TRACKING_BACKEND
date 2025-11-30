@@ -1,5 +1,7 @@
 package edu.dosw.rideci.infrastructure.persistance.repository;
 
+import org.springframework.stereotype.Component;
+
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DirectionsLeg;
@@ -12,15 +14,10 @@ import edu.dosw.rideci.domain.model.Location;
 import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.exceptions.ExternalServiceException;
 import edu.dosw.rideci.infrastructure.config.GoogleMapsConfig;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@Builder
+@RequiredArgsConstructor
+@Component
 public class GoogleMapsAdapter implements MapsServicePort {
 
     private final GoogleMapsConfig googleMapsConfig;
