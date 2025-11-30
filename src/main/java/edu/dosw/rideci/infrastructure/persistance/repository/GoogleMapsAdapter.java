@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
+import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
@@ -15,9 +16,11 @@ import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.exceptions.ExternalServiceException;
 import edu.dosw.rideci.infrastructure.config.GoogleMapsConfig;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class GoogleMapsAdapter implements MapsServicePort {
 
     private final GoogleMapsConfig googleMapsConfig;
@@ -27,7 +30,7 @@ public class GoogleMapsAdapter implements MapsServicePort {
 
             DirectionsResult result = DirectionsApi.newRequest(googleMapsConfig.geoApiContext())
                     .origin(origin.getAddress())
-                    .destination(origin.getAddress())
+                    .destination(destination.getAddress())
                     .mode(TravelMode.DRIVING)
                     .await();
 
@@ -42,8 +45,15 @@ public class GoogleMapsAdapter implements MapsServicePort {
                         .build();
             }
 
+        } catch (ApiException e) {
+
+            throw new ExternalServiceException("Error connecting with Google Maps " + e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new ExternalServiceException("La petición fue interrumpida");
         } catch (Exception e) {
-            throw new ExternalServiceException("Error connecting with Google Maps");
+            log.error("Error inesperado en GoogleMapsAdapter", e);
+            throw new ExternalServiceException("Error inesperado: " + e.getMessage());
         }
 
         return null;
