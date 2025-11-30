@@ -2,11 +2,15 @@ package edu.dosw.rideci.infrastructure.persistance.Entity;
 
 import java.time.LocalDateTime;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class LocationDocument {
 
     private double latitude;
@@ -19,7 +23,7 @@ public class LocationDocument {
 
     private String placeId;
 
-    private String address;
+    private String direction;
 
     private double accuracy;
 

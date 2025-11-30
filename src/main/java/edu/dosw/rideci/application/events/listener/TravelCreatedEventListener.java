@@ -20,12 +20,21 @@ public class TravelCreatedEventListener {
     public void handleTravelCreated(TravelCreatedEvent event) {
         System.out.println("!!! MENSAJE RECIBIDO EN GEOLOCALIZACIÓN !!!");
         System.out.println("Datos del viaje: " + event.toString());
+        System.out.println(event.getOrigin().getDirection());
+        System.out.println(event.getOrigin().getLatitude());
+        System.out.println(event.getOrigin().getLongitude());
+ 
         CreateRouteCommand command = new CreateRouteCommand(
                 event.getTravelId(),
                 event.getOrigin(),
                 event.getDestiny(),
                 event.getDepartureDateAndTime());
-        createRouteUseCase.createRoute(command);
+        try {
+            createRouteUseCase.createRoute(command);
+        } catch (Exception ex) {
+            // Log and swallow to avoid crashing the listener thread; consider moving to DLQ or retry strategy
+            log.error("Failed to create route for travelId={}. Event will be logged for manual review.", event.getTravelId(), ex);
+        }
     }
 
 }

@@ -21,7 +21,7 @@ public class RouteDocument {
 
     private LocationDocument origin;
 
-    private LocationDocument destination;
+    private LocationDocument destiny;
 
     private double totalDistance;
 

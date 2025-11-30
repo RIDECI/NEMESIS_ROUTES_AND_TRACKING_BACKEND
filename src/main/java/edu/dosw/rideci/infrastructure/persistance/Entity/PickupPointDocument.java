@@ -15,7 +15,7 @@ public class PickupPointDocument {
 
     private LocationDocument passengerLocation;
 
-    private LocalDateTime estimatedTimeToPick;
+    private Long estimatedTimeToPick;
 
     private int order;
 
