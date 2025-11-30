@@ -1,6 +1,6 @@
 package edu.dosw.rideci.infrastructure.persistance.repository;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
@@ -17,7 +17,7 @@ import edu.dosw.rideci.infrastructure.config.GoogleMapsConfig;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Component
+@Repository
 public class GoogleMapsAdapter implements MapsServicePort {
 
     private final GoogleMapsConfig googleMapsConfig;
