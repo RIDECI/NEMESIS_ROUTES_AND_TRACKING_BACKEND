@@ -20,10 +20,10 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class GeolocalizationService implements CreateRouteUseCase, GetRouteInformationUseCase, GetRealTimePositionUseCase, GetPickUpPointsUseCase, UpdateConfigurableIntervalUseCase {
+public class GeolocalizationService implements CreateRouteUseCase, GetRouteInformationUseCase,
+        GetRealTimePositionUseCase, GetPickUpPointsUseCase, UpdateConfigurableIntervalUseCase {
 
     private final GeolocalizationRepositoryPort geolocalizationRepositoryPort;
-
 
     @Override
     public Route createRoute(CreateRouteCommand event) {
@@ -31,23 +31,22 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
     }
 
     @Override
-    public Route getRouteInformation(Long routeId){
+    public Route getRouteInformation(String routeId) {
         return geolocalizationRepositoryPort.getRouteInformation(routeId);
     }
 
     @Override
-    public List<PickUpPoint> getPickUpPoints(Long routeId){
+    public List<PickUpPoint> getPickUpPoints(String routeId) {
         return geolocalizationRepositoryPort.getPickUpPoints(routeId);
     }
 
-    
     @Override
-    public Location getRealTimePosition(Long routeId){
+    public Location getRealTimePosition(String routeId) {
         return geolocalizationRepositoryPort.getRealTimePosition(routeId);
     }
 
     @Override
-    public TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval){
+    public TrackingConfiguration updateIntervalSeconds(String routeId, int newInterval) {
         return geolocalizationRepositoryPort.updateIntervalSeconds(routeId, newInterval);
     }
 

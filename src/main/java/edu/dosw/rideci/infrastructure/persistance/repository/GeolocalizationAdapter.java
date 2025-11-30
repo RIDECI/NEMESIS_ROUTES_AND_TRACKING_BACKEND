@@ -41,7 +41,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     }
 
     @Override
-    public Route getRouteInformation(Long routeId) {
+    public Route getRouteInformation(String routeId) {
 
         RouteDocument route = routeRepository.findById(routeId)
                 .orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
@@ -51,7 +51,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     }
 
     @Override
-    public List<PickUpPoint> getPickUpPoints(Long routeId) {
+    public List<PickUpPoint> getPickUpPoints(String routeId) {
 
         RouteDocument route = routeRepository.findById(routeId)
                 .orElseThrow(() -> new RouteNotFoundException("Route Not Found with id: {id}"));
@@ -60,7 +60,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     }
 
     @Override
-    public Location getRealTimePosition(Long routeId) {
+    public Location getRealTimePosition(String routeId) {
 
         RouteDocument route = routeRepository.findById(routeId)
                 .orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
@@ -69,7 +69,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     }
 
     @Override
-    public TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval) {
+    public TrackingConfiguration updateIntervalSeconds(String routeId, int newInterval) {
         return null;
     }
 

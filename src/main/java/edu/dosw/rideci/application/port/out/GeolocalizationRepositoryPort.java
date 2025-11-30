@@ -8,16 +8,15 @@ import edu.dosw.rideci.domain.model.TrackingConfiguration;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.domain.model.Location;
 
-
 public interface GeolocalizationRepositoryPort {
 
     Route createRoute(CreateRouteCommand event);
 
-    Route getRouteInformation(Long routeId);
+    Route getRouteInformation(String routeId);
 
-    List<PickUpPoint> getPickUpPoints(Long routeId);
+    List<PickUpPoint> getPickUpPoints(String routeId);
 
-    Location getRealTimePosition(Long routeId);
+    Location getRealTimePosition(String routeId);
 
-    TrackingConfiguration updateIntervalSeconds(Long routeId, int newInterval);
+    TrackingConfiguration updateIntervalSeconds(String routeId, int newInterval);
 }

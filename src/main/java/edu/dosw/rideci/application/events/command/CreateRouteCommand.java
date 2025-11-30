@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateRouteCommand {
 
-    private Long travelId;
+    private String travelId;
 
     private Location origin;
 

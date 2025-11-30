@@ -4,6 +4,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import edu.dosw.rideci.infrastructure.persistance.Entity.RouteDocument;
 
-public interface RouteRepository extends MongoRepository<RouteDocument, Long> {
+public interface RouteRepository extends MongoRepository<RouteDocument, String> {
 
 }

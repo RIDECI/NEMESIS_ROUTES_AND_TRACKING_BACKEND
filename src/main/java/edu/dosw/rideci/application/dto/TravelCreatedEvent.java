@@ -11,7 +11,7 @@ import lombok.Data;
 @Builder
 public class TravelCreatedEvent {
 
-    private Long travelId;
+    private String travelId;
 
     private Long driverId;
 
