@@ -16,8 +16,6 @@ import edu.dosw.rideci.application.port.in.UpdateConfigurableIntervalUseCase;
 import edu.dosw.rideci.application.port.in.UpdateLocationUseCase;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.domain.model.Route;
-import edu.dosw.rideci.domain.model.TrackingConfiguration;
-import edu.dosw.rideci.infrastructure.persistance.repository.GoogleMapsAdapter;
 import edu.dosw.rideci.domain.model.Location;
 import lombok.RequiredArgsConstructor;
 

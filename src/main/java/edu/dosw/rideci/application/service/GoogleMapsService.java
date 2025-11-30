@@ -1,6 +1,6 @@
 package edu.dosw.rideci.application.service;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import edu.dosw.rideci.application.port.in.MapsServicePort;
 import edu.dosw.rideci.domain.model.Location;
@@ -9,7 +9,7 @@ import edu.dosw.rideci.infrastructure.persistance.repository.GoogleMapsAdapter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Repository
+@Service
 public class GoogleMapsService implements MapsServicePort {
 
     private final GoogleMapsAdapter googleMapsAdapter;
