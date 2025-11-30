@@ -22,4 +22,10 @@ public interface GeolocalizationRepositoryPort {
     void updateIntervalSeconds(Long routeId, int newInterval);
 
     Location updateLocation(Long routeId, Location newLocation);
+
+    Route updateRoute(Long routeId, Route newRoute);
+
+    PickUpPoint addPickUpPoint(Long routeId, PickUpPoint newPickUpPoint);
+
+    PickUpPoint updatePickUpPoint(Long routeId, PickUpPoint updatedPickUpPoint);
 }

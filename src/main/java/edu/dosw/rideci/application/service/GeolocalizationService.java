@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import edu.dosw.rideci.application.dto.TravelCreatedEvent;
 import edu.dosw.rideci.application.events.command.CreateRouteCommand;
+import edu.dosw.rideci.application.port.in.AddPickUpPointUseCase;
 import edu.dosw.rideci.application.port.in.CreateRouteUseCase;
 import edu.dosw.rideci.application.port.in.GetRouteInformationUseCase;
 import edu.dosw.rideci.application.port.in.MapsServicePort;
@@ -14,6 +15,8 @@ import edu.dosw.rideci.application.port.in.GetRealTimePositionUseCase;
 import edu.dosw.rideci.application.port.in.GetPickUpPointsUseCase;
 import edu.dosw.rideci.application.port.in.UpdateConfigurableIntervalUseCase;
 import edu.dosw.rideci.application.port.in.UpdateLocationUseCase;
+import edu.dosw.rideci.application.port.in.UpdatePickUpPointUseCase;
+import edu.dosw.rideci.application.port.in.UpdateRouteUseCase;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.domain.model.TrackingConfiguration;
@@ -23,13 +26,18 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class GeolocalizationService implements CreateRouteUseCase, GetRouteInformationUseCase, GetRealTimePositionUseCase, GetPickUpPointsUseCase, UpdateConfigurableIntervalUseCase, UpdateLocationUseCase {
+public class GeolocalizationService implements CreateRouteUseCase, GetRouteInformationUseCase, GetRealTimePositionUseCase, GetPickUpPointsUseCase, UpdateConfigurableIntervalUseCase, UpdateLocationUseCase, UpdateRouteUseCase, AddPickUpPointUseCase, UpdatePickUpPointUseCase {
 
     private final GeolocalizationRepositoryPort geolocalizationRepositoryPort;
 
     @Override
     public Route createRoute(CreateRouteCommand event) {
         return geolocalizationRepositoryPort.createRoute(event);
+    }
+
+    @Override
+    public Route updateRoute(Long routeId, Route newRoute){
+        return geolocalizationRepositoryPort.updateRoute(routeId, newRoute);
     }
 
     @Override
@@ -56,6 +64,16 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
     @Override
     public Location updateLocation(Long routeId, Location newLocation){
         return geolocalizationRepositoryPort.updateLocation(routeId, newLocation);
+    }
+
+    @Override 
+    public PickUpPoint addPickUpPoint(Long routeId, PickUpPoint newPickUpPoint){
+        return geolocalizationRepositoryPort.addPickUpPoint(routeId, newPickUpPoint);
+    }
+
+    @Override
+    public PickUpPoint updatePickUpPoint(Long routeId, PickUpPoint updatedPickUpPoint){
+        return geolocalizationRepositoryPort.updatePickUpPoint(routeId, updatedPickUpPoint);
     }
 
 }
