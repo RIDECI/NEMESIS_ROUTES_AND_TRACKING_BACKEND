@@ -20,4 +20,10 @@ public interface GeolocalizationRepositoryPort {
     void updateIntervalSeconds(String routeId, int newInterval);
 
     Location updateLocation(String routeId, Location newLocation);
+
+    Route updateRoute(String routeId, Route newRoute);
+
+    PickUpPoint addPickUpPoint(String routeId, PickUpPoint newPickUpPoint);
+
+    PickUpPoint updatePickUpPoint(String routeId, PickUpPoint updatedPickUpPoint);
 }
