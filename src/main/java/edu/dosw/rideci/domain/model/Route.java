@@ -26,7 +26,7 @@ public class Route {
 
     private double totalDistance;
 
-    private int estimatedTime;
+    private Long estimatedTime;
 
     private String polyline;
 

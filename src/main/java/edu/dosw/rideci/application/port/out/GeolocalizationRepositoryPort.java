@@ -4,7 +4,6 @@ import java.util.List;
 
 import edu.dosw.rideci.application.events.command.CreateRouteCommand;
 import edu.dosw.rideci.domain.model.Route;
-import edu.dosw.rideci.domain.model.TrackingConfiguration;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.domain.model.Location;
 
@@ -18,5 +17,7 @@ public interface GeolocalizationRepositoryPort {
 
     Location getRealTimePosition(String routeId);
 
-    TrackingConfiguration updateIntervalSeconds(String routeId, int newInterval);
+    void updateIntervalSeconds(String routeId, int newInterval);
+
+    Location updateLocation(String routeId, Location newLocation);
 }
