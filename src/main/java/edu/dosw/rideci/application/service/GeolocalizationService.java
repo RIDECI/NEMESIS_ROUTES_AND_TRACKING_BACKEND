@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import edu.dosw.rideci.application.dto.TravelCreatedEvent;
 import edu.dosw.rideci.application.events.command.CreateRouteCommand;
+import edu.dosw.rideci.application.events.command.UpdateRouteCommand;
 import edu.dosw.rideci.application.port.in.AddPickUpPointUseCase;
 import edu.dosw.rideci.application.port.in.CreateRouteUseCase;
 import edu.dosw.rideci.application.port.in.GetRouteInformationUseCase;
@@ -36,12 +37,12 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
     }
 
     @Override
-    public Route updateRoute(String routeId, Route newRoute){
-        return geolocalizationRepositoryPort.updateRoute(routeId, newRoute);
+    public Route updateRoute(UpdateRouteCommand newRoute) {
+        return geolocalizationRepositoryPort.updateRoute(newRoute);
     }
 
     @Override
-    public Route getRouteInformation(String routeId){
+    public Route getRouteInformation(String routeId) {
         return geolocalizationRepositoryPort.getRouteInformation(routeId);
     }
 
@@ -64,13 +65,13 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
         return geolocalizationRepositoryPort.updateLocation(routeId, newLocation);
     }
 
-    @Override 
-    public PickUpPoint addPickUpPoint(String routeId, PickUpPoint newPickUpPoint){
+    @Override
+    public PickUpPoint addPickUpPoint(String routeId, PickUpPoint newPickUpPoint) {
         return geolocalizationRepositoryPort.addPickUpPoint(routeId, newPickUpPoint);
     }
 
     @Override
-    public PickUpPoint updatePickUpPoint(String routeId, PickUpPoint updatedPickUpPoint){
+    public PickUpPoint updatePickUpPoint(String routeId, PickUpPoint updatedPickUpPoint) {
         return geolocalizationRepositoryPort.updatePickUpPoint(routeId, updatedPickUpPoint);
     }
 
