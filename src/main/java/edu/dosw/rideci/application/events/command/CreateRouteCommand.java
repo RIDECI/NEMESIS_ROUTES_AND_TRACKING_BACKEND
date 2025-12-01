@@ -3,9 +3,9 @@ package edu.dosw.rideci.application.events.command;
 import java.time.LocalDateTime;
 
 import edu.dosw.rideci.domain.model.Location;
-import lombok.Data;
-import lombok.Builder;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data

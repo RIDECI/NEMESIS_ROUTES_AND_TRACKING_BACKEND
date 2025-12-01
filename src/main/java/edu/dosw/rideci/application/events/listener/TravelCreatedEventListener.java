@@ -32,7 +32,6 @@ public class TravelCreatedEventListener {
         try {
             createRouteUseCase.createRoute(command);
         } catch (Exception ex) {
-            // Log and swallow to avoid crashing the listener thread; consider moving to DLQ or retry strategy
             log.error("Failed to create route for travelId={}. Event will be logged for manual review.", event.getTravelId(), ex);
         }
     }
