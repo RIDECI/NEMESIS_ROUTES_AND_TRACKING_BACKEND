@@ -8,8 +8,10 @@ import edu.dosw.rideci.application.dto.TravelCreatedEvent;
 import edu.dosw.rideci.application.events.command.CreateRouteCommand;
 import edu.dosw.rideci.application.port.in.AddPickUpPointUseCase;
 import edu.dosw.rideci.application.port.in.CreateRouteUseCase;
+import edu.dosw.rideci.application.port.in.DeleteRouteUseCase;
 import edu.dosw.rideci.application.port.in.GetRouteInformationUseCase;
 import edu.dosw.rideci.application.port.in.MapsServicePort;
+import edu.dosw.rideci.application.port.in.RemovePickUpPointUseCase;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.application.port.in.GetRealTimePositionUseCase;
 import edu.dosw.rideci.application.port.in.GetPickUpPointsUseCase;
@@ -26,7 +28,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GeolocalizationService implements CreateRouteUseCase, GetRouteInformationUseCase,
         GetRealTimePositionUseCase, GetPickUpPointsUseCase, UpdateConfigurableIntervalUseCase,
-        UpdateLocationUseCase, UpdateRouteUseCase, AddPickUpPointUseCase, UpdatePickUpPointUseCase {
+        UpdateLocationUseCase, UpdateRouteUseCase, AddPickUpPointUseCase, UpdatePickUpPointUseCase,
+        RemovePickUpPointUseCase, DeleteRouteUseCase {
 
     private final GeolocalizationRepositoryPort geolocalizationRepositoryPort;
 
@@ -74,4 +77,13 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
         return geolocalizationRepositoryPort.updatePickUpPoint(routeId, updatedPickUpPoint);
     }
 
+    @Override
+    public void removePickUpPoint(String routeId, PickUpPoint pickUpPoint){
+        geolocalizationRepositoryPort.removePickUpPoint(routeId, pickUpPoint);
+    }
+
+    @Override
+    public void deleteRoute(String routeId){
+        geolocalizationRepositoryPort.deleteRoute(routeId);
+    }
 }
