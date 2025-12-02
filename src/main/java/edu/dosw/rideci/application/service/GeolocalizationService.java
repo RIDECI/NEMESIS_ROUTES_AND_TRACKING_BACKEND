@@ -9,6 +9,7 @@ import edu.dosw.rideci.application.events.command.CreateRouteCommand;
 import edu.dosw.rideci.application.events.command.UpdateRouteCommand;
 import edu.dosw.rideci.application.port.in.AddPickUpPointUseCase;
 import edu.dosw.rideci.application.port.in.CreateRouteUseCase;
+import edu.dosw.rideci.application.port.in.DeleteRouteUseCase;
 import edu.dosw.rideci.application.port.in.GetRouteInformationUseCase;
 import edu.dosw.rideci.application.port.in.MapsServicePort;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
@@ -27,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GeolocalizationService implements CreateRouteUseCase, GetRouteInformationUseCase,
         GetRealTimePositionUseCase, GetPickUpPointsUseCase, UpdateConfigurableIntervalUseCase,
-        UpdateLocationUseCase, UpdateRouteUseCase, AddPickUpPointUseCase, UpdatePickUpPointUseCase {
+        UpdateLocationUseCase, UpdateRouteUseCase, AddPickUpPointUseCase, UpdatePickUpPointUseCase, DeleteRouteUseCase {
 
     private final GeolocalizationRepositoryPort geolocalizationRepositoryPort;
 
@@ -44,6 +45,13 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
     @Override
     public Route getRouteInformation(String routeId) {
         return geolocalizationRepositoryPort.getRouteInformation(routeId);
+    }
+
+    @Override
+    public void deleteRoute(String travelId) {
+
+        geolocalizationRepositoryPort.deleteRoute(travelId);
+
     }
 
     @Override

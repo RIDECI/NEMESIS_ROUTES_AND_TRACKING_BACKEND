@@ -27,7 +27,7 @@ public class TravelUpdatedEventListener {
         try {
             updateRoute.updateRoute(command);
         } catch (Exception ex) {
-            log.error("Failed to create route for travelId={}. Event will be logged for manual review.",
+            log.error("Failed to update route for travelId={}. Event will be logged for manual review.",
                     event.getTravelId(), ex);
         }
 

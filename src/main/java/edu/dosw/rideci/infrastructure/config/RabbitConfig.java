@@ -23,8 +23,21 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue geolocationTravelCancelledQueue() {
+        return new Queue("geolocation.travel.cancelled.queue", true);
+    }
+
+    @Bean
     public TopicExchange travelExchange() {
         return new TopicExchange("travel.exchange", true, false);
+    }
+
+    @Bean
+    public Binding bindingGeolocationTravelCancelled() {
+        return BindingBuilder
+                .bind(geolocationTravelCancelledQueue())
+                .to(travelExchange())
+                .with("travel.cancelled");
     }
 
     @Bean

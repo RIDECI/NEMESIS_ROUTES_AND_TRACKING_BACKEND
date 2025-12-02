@@ -101,6 +101,15 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     }
 
     @Override
+    public void deleteRoute(String travelId) {
+
+        RouteDocument routeToDelete = routeRepository.findByTravelId(travelId);
+
+        routeRepository.delete(routeToDelete);
+
+    }
+
+    @Override
     public Location updateLocation(String routeId, Location newLocation) {
 
         RouteDocument route = routeRepository.findById(routeId)
