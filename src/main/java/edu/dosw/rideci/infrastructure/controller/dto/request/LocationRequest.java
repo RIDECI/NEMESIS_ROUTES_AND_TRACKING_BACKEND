@@ -1,4 +1,4 @@
-package edu.dosw.rideci.infrastructure.controller.dto.Request;
+package edu.dosw.rideci.infrastructure.controller.dto.request;
 
 import java.time.LocalDateTime;
 
@@ -22,5 +22,5 @@ public class LocationRequest {
     private String direction;
 
     private double accuracy;
-    
+
 }

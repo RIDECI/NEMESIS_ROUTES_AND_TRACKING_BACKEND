@@ -14,6 +14,8 @@ import lombok.Data;
 @Builder
 public class RouteRequest {
 
+    private String id;
+
     private String travelId;
 
     private Location origin;
