@@ -20,10 +20,10 @@ public class GeolocationController {
     private final GetRouteInformationUseCase getRouteInformationUseCase;
     private final RouteMapperInitial routeMapperInitial;
 
-    @GetMapping("/{routeId}")
+    @GetMapping("/{travelId}")
     public ResponseEntity<RouteResponse> getRouteInformation(
-            @PathVariable String routeId) {
-        Route routeInformation = getRouteInformationUseCase.getRouteInformation(routeId);
+            @PathVariable String travelId) {
+        Route routeInformation = getRouteInformationUseCase.getRouteInformation(travelId);
 
         return ResponseEntity.ok(routeMapperInitial.toResponse(routeInformation));
     }

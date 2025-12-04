@@ -45,8 +45,8 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
     }
 
     @Override
-    public Route getRouteInformation(String routeId) {
-        return geolocalizationRepositoryPort.getRouteInformation(routeId);
+    public Route getRouteInformation(String travelId) {
+        return geolocalizationRepositoryPort.getRouteInformation(travelId);
     }
 
     @Override

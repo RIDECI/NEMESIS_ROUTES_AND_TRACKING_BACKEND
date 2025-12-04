@@ -245,10 +245,9 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     }
 
     @Override
-    public Route getRouteInformation(String routeId) {
+    public Route getRouteInformation(String travelId) {
 
-        RouteDocument route = routeRepository.findById(routeId)
-                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+        RouteDocument route = routeRepository.findByTravelId(travelId);
 
         return routeMapper.toDomain(route);
 

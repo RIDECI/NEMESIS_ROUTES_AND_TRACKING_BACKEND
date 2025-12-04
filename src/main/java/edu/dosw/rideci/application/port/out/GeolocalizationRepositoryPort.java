@@ -12,7 +12,7 @@ public interface GeolocalizationRepositoryPort {
 
     Route createRoute(CreateRouteCommand event);
 
-    Route getRouteInformation(String routeId);
+    Route getRouteInformation(String travelId);
 
     List<PickUpPoint> getPickUpPoints(String routeId);
 
