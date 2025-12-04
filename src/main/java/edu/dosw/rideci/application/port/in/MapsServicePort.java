@@ -5,6 +5,6 @@ import edu.dosw.rideci.domain.model.Route;
 
 public interface MapsServicePort {
 
-    Route calculateRoute(Location origin, Location destination);
+    Route calculateRoute(Location origin, Location destiny);
 
 }

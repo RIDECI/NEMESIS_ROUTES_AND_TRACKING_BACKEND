@@ -1,7 +1,5 @@
 package edu.dosw.rideci.application.events.command;
 
-import java.time.LocalDateTime;
-
 import edu.dosw.rideci.domain.model.Location;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,14 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateRouteCommand {
+public class UpdateRouteCommand {
 
     private String travelId;
 
     private Location origin;
 
     private Location destiny;
-
-    private LocalDateTime departureDateAndTime;
 
 }

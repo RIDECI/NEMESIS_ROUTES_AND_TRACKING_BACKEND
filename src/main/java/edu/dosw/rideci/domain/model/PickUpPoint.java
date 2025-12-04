@@ -21,7 +21,7 @@ public class PickUpPoint {
 
     private Location passengerLocation;
 
-    private LocalDateTime estimatedTimeToPick;
+    private Long estimatedTimeToPick;
 
     private int order;
 }
