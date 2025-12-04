@@ -23,7 +23,7 @@ public class TravelCreatedEventListener {
         System.out.println(event.getOrigin().getDirection());
         System.out.println(event.getOrigin().getLatitude());
         System.out.println(event.getOrigin().getLongitude());
- 
+
         CreateRouteCommand command = new CreateRouteCommand(
                 event.getTravelId(),
                 event.getOrigin(),
@@ -32,8 +32,8 @@ public class TravelCreatedEventListener {
         try {
             createRouteUseCase.createRoute(command);
         } catch (Exception ex) {
-            // Log and swallow to avoid crashing the listener thread; consider moving to DLQ or retry strategy
-            log.error("Failed to create route for travelId={}. Event will be logged for manual review.", event.getTravelId(), ex);
+            log.error("Failed to create route for travelId={}. Event will be logged for manual review.",
+                    event.getTravelId(), ex);
         }
     }
 

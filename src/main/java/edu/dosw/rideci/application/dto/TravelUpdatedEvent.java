@@ -1,25 +1,23 @@
-package edu.dosw.rideci.application.events.command;
-
-import java.time.LocalDateTime;
+package edu.dosw.rideci.application.dto;
 
 import edu.dosw.rideci.domain.model.Location;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateRouteCommand {
+public class TravelUpdatedEvent {
 
     private String travelId;
 
     private Location origin;
 
     private Location destiny;
-
-    private LocalDateTime departureDateAndTime;
 
 }

@@ -16,18 +16,13 @@ import com.google.maps.model.LatLng;
 import com.google.maps.model.TrafficModel;
 import com.google.maps.model.TravelMode;
 
-import edu.dosw.rideci.application.port.in.MapsServicePort;
 import edu.dosw.rideci.application.port.out.GoogleMapsRepositoryPort;
 import edu.dosw.rideci.domain.model.Location;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.exceptions.ExternalServiceException;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import edu.dosw.rideci.infrastructure.config.GoogleMapsConfig;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @RequiredArgsConstructor
 @Repository
@@ -39,19 +34,19 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
 
 
     @Override
-    public Route calculateRoute(Location origin, Location destiny){
+    public Route calculateRoute(Location origin, Location destiny) {
 
-        if(destiny.getDirection() == null){
+        if (destiny.getDirection() == null) {
             throw new IllegalArgumentException("Direction cannot be null");
         }
 
         try {
 
             DirectionsResult result = DirectionsApi.newRequest(geoApiContext)
-                .origin(origin.getDirection())
-                .destination(destiny.getDirection())
-                .mode(TravelMode.DRIVING)
-                .await();
+                    .origin(origin.getDirection())
+                    .destination(destiny.getDirection())
+                    .mode(TravelMode.DRIVING)
+                    .await();
 
             if (result.routes.length > 0) {
                 DirectionsRoute route = result.routes[0];
@@ -73,30 +68,31 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
     }
 
     @Override
-    public Long recalculateETA(Long newETA){
+    public Long recalculateETA(Long newETA) {
         return null;
     }
 
     @Override
-    public Route calculateRouteWithWayPoints(Location origin, Location destiny, List<PickUpPoint> pickUpPoints){
-        try{
+    public Route calculateRouteWithWayPoints(Location origin, Location destiny, List<PickUpPoint> pickUpPoints) {
+        try {
 
             String originStr = origin.getLatitude() + "," + origin.getLongitude();
             String destStr = destiny.getLatitude() + "," + destiny.getLongitude();
 
             String[] waypointArray = pickUpPoints.stream()
-                .map(p -> p.getPassengerLocation().getLatitude() + "," + p.getPassengerLocation().getLongitude())
-                .toArray(String [] :: new);
+                    .map(p -> p.getPassengerLocation().getDirection())
+                    .toArray(String[]::new);
 
-            DirectionsResult result = DirectionsApi.newRequest(geoApiContext)
-                .origin(originStr)
-                .destination(destStr)
-                .mode(TravelMode.DRIVING)
-                .waypoints(waypointArray)
-                .optimizeWaypoints(true)
-                .await();
+            DirectionsResult result = DirectionsApi.newRequest(googleMapsConfig.geoApiContext())
+                    .origin(origin.getDirection())
+                    .destination(destiny.getDirection())
+                    .mode(TravelMode.DRIVING)
+                    .waypoints(waypointArray)
+                    .optimizeWaypoints(true)
+                    .trafficModel(TrafficModel.BEST_GUESS)
+                    .await();
 
-            if(result.routes.length > 0) {
+            if (result.routes.length > 0) {
                 DirectionsRoute route = result.routes[0];
 
                 int[] orderIndex = route.waypointOrder;
@@ -104,17 +100,14 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
                 Long totalDistance = 0L;
                 Long totalDuration = 0L;
 
-                for(int i=0; i < route.legs.length; i++){ 
+                for (int i = 0; i < route.legs.length; i++) {
                     DirectionsLeg leg = route.legs[i];
 
                     totalDistance += leg.distance.inMeters;
                     totalDuration += leg.duration.inSeconds;
 
-                    if(i < orderIndex.length){
-
-                        int originalIndex = orderIndex[i];
-
-                        PickUpPoint point = pickUpPoints.get(originalIndex);
+                    if (i < pickUpPoints.size()) {
+                        PickUpPoint point = pickUpPoints.get(i);
 
                         point.setDistanceFromPreviousStop(leg.distance.inMeters);
                         point.setEstimatedTimeToPick(leg.duration.inSeconds);
@@ -124,13 +117,14 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
                 }
 
                 return Route.builder()
-                    .totalDistance(totalDistance)
-                    .estimatedTime(totalDuration)
-                    .polyline(route.overviewPolyline.getEncodedPath())
-                    .build();
+                        .totalDistance(totalDistance)
+                        .estimatedTime(totalDuration)
+                        .polyline(route.overviewPolyline.getEncodedPath())
+                        .build();
             }
-        } catch (Exception e){
-            log.error("Google Maps calculateRouteWithWayPoints failed origin={} destiny={} waypoints={} ", origin, destiny, pickUpPoints, e);
+        } catch (Exception e) {
+            log.error("Google Maps calculateRouteWithWayPoints failed origin={} destiny={} waypoints={} ", origin,
+                    destiny, pickUpPoints, e);
             throw new ExternalServiceException("Error connecting with Google Maps", e);
         }
         return null;
