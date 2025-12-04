@@ -1,4 +1,4 @@
-package edu.dosw.rideci.infrastructure.controller.dto.Request;
+package edu.dosw.rideci.infrastructure.controller.dto.Response;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class TravelTrackingRequest {
+public class TravelTrackingResponse {
 
     private String travelId;
 
@@ -25,4 +25,5 @@ public class TravelTrackingRequest {
     private double remainingDistance;
 
     private TrackingConfiguration trackingConfiguration;
+
 }

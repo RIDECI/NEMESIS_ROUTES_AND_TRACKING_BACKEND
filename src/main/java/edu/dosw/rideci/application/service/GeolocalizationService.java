@@ -10,12 +10,13 @@ import edu.dosw.rideci.application.events.command.UpdateRouteCommand;
 import edu.dosw.rideci.application.port.in.AddPickUpPointUseCase;
 import edu.dosw.rideci.application.port.in.CreateRouteUseCase;
 import edu.dosw.rideci.application.port.in.DeleteRouteUseCase;
+import edu.dosw.rideci.application.port.in.GetPickUpPointsUseCase;
+import edu.dosw.rideci.application.port.in.GetRealTimePositionUseCase;
 import edu.dosw.rideci.application.port.in.GetRouteInformationUseCase;
 import edu.dosw.rideci.application.port.in.MapsServicePort;
-import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
-import edu.dosw.rideci.application.port.in.GetRealTimePositionUseCase;
-import edu.dosw.rideci.application.port.in.GetPickUpPointsUseCase;
+import edu.dosw.rideci.application.port.in.RemovePickUpPointUseCase;
 import edu.dosw.rideci.application.port.in.UpdateConfigurableIntervalUseCase;
+import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.application.port.in.UpdateLocationUseCase;
 import edu.dosw.rideci.application.port.in.UpdatePickUpPointUseCase;
 import edu.dosw.rideci.application.port.in.UpdateRouteUseCase;
@@ -28,7 +29,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GeolocalizationService implements CreateRouteUseCase, GetRouteInformationUseCase,
         GetRealTimePositionUseCase, GetPickUpPointsUseCase, UpdateConfigurableIntervalUseCase,
-        UpdateLocationUseCase, UpdateRouteUseCase, AddPickUpPointUseCase, UpdatePickUpPointUseCase, DeleteRouteUseCase {
+        UpdateLocationUseCase, UpdateRouteUseCase, AddPickUpPointUseCase, UpdatePickUpPointUseCase,
+        RemovePickUpPointUseCase, DeleteRouteUseCase {
 
     private final GeolocalizationRepositoryPort geolocalizationRepositoryPort;
 
@@ -83,4 +85,8 @@ public class GeolocalizationService implements CreateRouteUseCase, GetRouteInfor
         return geolocalizationRepositoryPort.updatePickUpPoint(routeId, updatedPickUpPoint);
     }
 
+    @Override
+    public void removePickUpPoint(String routeId, PickUpPoint pickUpPoint) {
+        geolocalizationRepositoryPort.removePickUpPoint(routeId, pickUpPoint);
+    }
 }

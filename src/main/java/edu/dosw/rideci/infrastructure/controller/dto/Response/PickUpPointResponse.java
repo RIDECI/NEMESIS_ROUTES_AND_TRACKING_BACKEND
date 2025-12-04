@@ -1,4 +1,4 @@
-package edu.dosw.rideci.infrastructure.controller.dto.Request;
+package edu.dosw.rideci.infrastructure.controller.dto.response;
 
 import edu.dosw.rideci.domain.model.Location;
 import lombok.Builder;
@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PickUpPointRequest {
-    
+public class PickUpPointResponse {
+
     private Long passengerId;
 
     private double distanceFromPreviousStop;
@@ -17,5 +17,5 @@ public class PickUpPointRequest {
     private Long estimatedTimeToPick;
 
     private int order;
-    
+
 }

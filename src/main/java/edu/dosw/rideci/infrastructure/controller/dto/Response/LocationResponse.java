@@ -1,4 +1,4 @@
-package edu.dosw.rideci.infrastructure.controller.dto.Request;
+package edu.dosw.rideci.infrastructure.controller.dto.response;
 
 import java.time.LocalDateTime;
 
@@ -7,13 +7,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LocationRequest {
+public class LocationResponse {
 
     private double latitude;
 
     private double longitude;
-
-    private LocalDateTime timeStamp;
 
     private double speed;
 
@@ -22,5 +20,5 @@ public class LocationRequest {
     private String direction;
 
     private double accuracy;
-    
+
 }

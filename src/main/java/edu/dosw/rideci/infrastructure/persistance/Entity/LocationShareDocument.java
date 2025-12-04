@@ -16,7 +16,7 @@ import lombok.Data;
 public class LocationShareDocument {
 
     @Id
-    private Long id;
+    private String id;
 
     private Long userId;
 

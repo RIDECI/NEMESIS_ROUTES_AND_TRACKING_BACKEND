@@ -28,5 +28,7 @@ public interface GeolocalizationRepositoryPort {
 
     PickUpPoint updatePickUpPoint(String routeId, PickUpPoint updatedPickUpPoint);
 
+    void removePickUpPoint(String routeId, PickUpPoint pickUpPoint);
+
     void deleteRoute(String travelId);
 }

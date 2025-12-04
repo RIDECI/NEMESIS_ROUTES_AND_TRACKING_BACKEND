@@ -1,9 +1,15 @@
 package edu.dosw.rideci.infrastructure.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.dosw.rideci.application.mapper.RouteMapperInitial;
 import edu.dosw.rideci.application.port.in.GetRouteInformationUseCase;
+import edu.dosw.rideci.domain.model.Route;
+import edu.dosw.rideci.infrastructure.controller.dto.response.RouteResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -12,5 +18,14 @@ import lombok.RequiredArgsConstructor;
 public class GeolocationController {
 
     private final GetRouteInformationUseCase getRouteInformationUseCase;
+    private final RouteMapperInitial routeMapperInitial;
+
+    @GetMapping("/{routeId}")
+    public ResponseEntity<RouteResponse> getRouteInformation(
+            @PathVariable String routeId) {
+        Route routeInformation = getRouteInformationUseCase.getRouteInformation(routeId);
+
+        return ResponseEntity.ok(routeMapperInitial.toResponse(routeInformation));
+    }
 
 }

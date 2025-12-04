@@ -10,10 +10,12 @@ import lombok.Data;
 @Data
 @Builder
 public class LocationShareRequest {
+    
+    private Long id;
 
     private Long userId;
 
-    private String travelId;
+    private Long travelId;
 
     private List<String> emergencyContacts;
 
@@ -24,5 +26,5 @@ public class LocationShareRequest {
     private String trackingUrl;
 
     private ShareStatus shareStatus;
-
+    
 }

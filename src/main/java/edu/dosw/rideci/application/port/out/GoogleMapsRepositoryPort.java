@@ -14,4 +14,5 @@ public interface GoogleMapsRepositoryPort {
 
     Route calculateRouteWithWayPoints(Location origin, Location destiny, List<PickUpPoint> pickUpPoints);
 
+    boolean isPickUpLocationOnPath(double pickUpPointLat, double pickUpPointLon, String encodedPolyline, double toleranceMeters);
 }

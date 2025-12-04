@@ -12,7 +12,7 @@ import lombok.Data;
 @Builder
 public class TravelTrackingRequest {
 
-    private String travelId;
+    private Long travelId;
 
     private Location lastLocation;
 

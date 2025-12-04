@@ -4,15 +4,13 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 
-import edu.dosw.rideci.domain.model.PickUpPoint;
-import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.domain.model.Location;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.domain.model.Route;
-import edu.dosw.rideci.infrastructure.controller.dto.Request.RouteRequest;
-import edu.dosw.rideci.infrastructure.controller.dto.Response.LocationResponse;
-import edu.dosw.rideci.infrastructure.controller.dto.Response.PickUpPointResponse;
-import edu.dosw.rideci.infrastructure.controller.dto.Response.RouteResponse;
+import edu.dosw.rideci.infrastructure.controller.dto.request.RouteRequest;
+import edu.dosw.rideci.infrastructure.controller.dto.response.LocationResponse;
+import edu.dosw.rideci.infrastructure.controller.dto.response.PickUpPointResponse;
+import edu.dosw.rideci.infrastructure.controller.dto.response.RouteResponse;
 
 @Mapper(componentModel = "spring")
 public interface RouteMapperInitial {

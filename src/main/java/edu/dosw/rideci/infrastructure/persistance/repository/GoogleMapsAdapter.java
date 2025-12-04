@@ -1,14 +1,18 @@
 package edu.dosw.rideci.infrastructure.persistance.repository;
 
 import java.util.List;
+import java.lang.Math;
+
 import org.springframework.stereotype.Repository;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
+import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.LatLng;
 import com.google.maps.model.TrafficModel;
 import com.google.maps.model.TravelMode;
 
@@ -25,8 +29,8 @@ import lombok.RequiredArgsConstructor;
 @Slf4j
 public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
 
-    private final GoogleMapsConfig googleMapsConfig;
     private final GeoApiContext geoApiContext;
+    private final GeolocationUtils geolocationUtils;
 
     @Override
     public Route calculateRoute(Location origin, Location destiny) {
@@ -71,11 +75,14 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
     public Route calculateRouteWithWayPoints(Location origin, Location destiny, List<PickUpPoint> pickUpPoints) {
         try {
 
+            String originStr = origin.getLatitude() + "," + origin.getLongitude();
+            String destStr = destiny.getLatitude() + "," + destiny.getLongitude();
+
             String[] waypointArray = pickUpPoints.stream()
                     .map(p -> p.getPassengerLocation().getDirection())
                     .toArray(String[]::new);
 
-            DirectionsResult result = DirectionsApi.newRequest(googleMapsConfig.geoApiContext())
+            DirectionsResult result = DirectionsApi.newRequest(geoApiContext)
                     .origin(origin.getDirection())
                     .destination(destiny.getDirection())
                     .mode(TravelMode.DRIVING)
@@ -103,6 +110,8 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
 
                         point.setDistanceFromPreviousStop(leg.distance.inMeters);
                         point.setEstimatedTimeToPick(leg.duration.inSeconds);
+
+                        point.setOrder(i + 1);
                     }
                 }
 
@@ -120,4 +129,22 @@ public class GoogleMapsAdapter implements GoogleMapsRepositoryPort {
         return null;
     }
 
+    public boolean isPickUpLocationOnPath(double pickUpPointLat, double pickUpPointLon, String encodedPolyline,
+            double toleranceMeters) {
+
+        List<LatLng> polylinePoints = PolylineEncoding.decode(encodedPolyline);
+
+        for (int i = 0; i < polylinePoints.size() - 1; i++) {
+            LatLng start = polylinePoints.get(i);
+            LatLng end = polylinePoints.get(i + 1);
+
+            double distanceToSegment = geolocationUtils.distanceToSegment(pickUpPointLat, pickUpPointLon, start.lat,
+                    start.lng, end.lat, end.lng);
+
+            if (distanceToSegment < toleranceMeters) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -1,4 +1,4 @@
-package edu.dosw.rideci.infrastructure.controller.dto.Request;
+package edu.dosw.rideci.infrastructure.controller.dto.Response;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,13 +9,13 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LocationShareRequest {
+public class LocationShareResponse {
 
     private Long userId;
 
     private String travelId;
 
-    private List<String> emergencyContacts;
+    private List<Long> emergencyContacts;
 
     private LocalDateTime createdAt;
 

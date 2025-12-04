@@ -1,4 +1,4 @@
-package edu.dosw.rideci.infrastructure.controller.dto.request;
+package edu.dosw.rideci.infrastructure.controller.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RouteRequest {
+public class RouteResponse {
 
     private String travelId;
 
