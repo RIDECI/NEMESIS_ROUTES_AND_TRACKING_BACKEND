@@ -5,26 +5,21 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.rabbitmq.client.Return;
-
 import edu.dosw.rideci.application.events.command.CreateRouteCommand;
 import edu.dosw.rideci.application.events.command.UpdateRouteCommand;
 import edu.dosw.rideci.application.port.in.CalculateRouteWithWayPointsUseCase;
 import edu.dosw.rideci.application.port.in.MapsServicePort;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.domain.model.Route;
-import edu.dosw.rideci.domain.model.TrackingConfiguration;
 import edu.dosw.rideci.domain.model.Location;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.infrastructure.persistance.Entity.LocationDocument;
 import edu.dosw.rideci.infrastructure.persistance.Entity.RouteDocument;
-import edu.dosw.rideci.infrastructure.persistance.Entity.TravelTrackingDocument;
 import edu.dosw.rideci.infrastructure.persistance.mapper.RouteMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import edu.dosw.rideci.exceptions.RouteNotFoundException;
 import edu.dosw.rideci.exceptions.TimeOutException;
-import edu.dosw.rideci.exceptions.ExternalServiceException;
 
 @RequiredArgsConstructor
 @Repository
@@ -38,8 +33,6 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
 
     @Override
     public Route createRoute(CreateRouteCommand event) {
-        System.out.println(event.getOrigin().getDirection());
-        System.out.println(event.getDestiny().getDirection());
 
         Route googleData = mapsServicePort.calculateRoute(event.getOrigin(), event.getDestiny());
 
