@@ -11,7 +11,6 @@ import edu.dosw.rideci.application.events.command.UpdateRouteCommand;
 import edu.dosw.rideci.application.port.in.CalculateRouteWithWayPointsUseCase;
 import edu.dosw.rideci.application.port.in.IsPickUpLocationOnPath;
 import edu.dosw.rideci.application.port.in.MapsServicePort;
-import edu.dosw.rideci.application.port.in.RecalculateETA;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.domain.model.TravelTracking;
@@ -38,7 +37,6 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     private final IsPickUpLocationOnPath isPickUpLocationOnPathUseCase;
     private final CalculateRouteWithWayPointsUseCase calculateRouteWithWayPointsUseCase;
     private final GeolocationUtils geolocationUtils;
-    private final RecalculateETA recalculateGoogleETA;
 
     @Override
     public Route createRoute(CreateRouteCommand event) {
@@ -104,13 +102,15 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
 
     @Override
     public void removePickUpPoint(String routeId, PickUpPoint pickUpPoint) {
-        RouteDocument route = routeRepository.findByTravelId(routeId);
-        if (route != null && route.getPickUpPoints() != null) {
+        RouteDocument routeDoc = routeRepository.findByTravelId(routeId);
+        Route route = routeMapper.toDomain(routeDoc);
+
+        if (routeDoc != null && route.getPickUpPoints() != null) {
             route.getPickUpPoints().removeIf(p -> p.getPassengerId().equals(pickUpPoint.getPassengerId()));
-            routeRepository.save(route);
+            routeRepository.save(routeDoc);
         }
-        //CalculareRouteWithWaypoints
-        //RecalculateETA   
+
+        calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(), route.getDestiny(), route.getPickUpPoints());
     }
 
     @Override
@@ -177,8 +177,6 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
         if (route.getTravelTracking().getRemainingDistance() < 50.0) {
             log.info("Driver is arriving. Distance: {} meters", route.getTravelTracking().getRemainingDistance());
         } 
-
-        recalculateGoogleETA.recalculateETA(routeId, updatedLocation, route.getDestiny());
       
         RouteDocument updatedRouteDoc = routeMapper.toDocument(route);
         routeRepository.save(updatedRouteDoc);
@@ -215,7 +213,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
             throw new InvalidPickUpPointException("The pick up point choosed is not valid for the route");
         }
 
-        route.getPickUpPoints().add(newPickUpPoint);
+        route.getPickUpPoints().add(newPoint);
 
         Route recalculatedRoute = calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(),
                 route.getDestiny(), route.getPickUpPoints());
@@ -251,15 +249,19 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
         pickUpPoint.setDistanceFromPreviousStop(updatedPickUpPoint.getDistanceFromPreviousStop());
         pickUpPoint.setEstimatedTimeToPick(updatedPickUpPoint.getEstimatedTimeToPick());
 
-        Route recalculatedRoute = calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(),
-                route.getDestiny(), route.getPickUpPoints());
+        //Route recalculatedRoute = calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(),
+        //        route.getDestiny(), route.getPickUpPoints());
 
         // PickUpPoint pickUpPoint = route.getPickUpPoints()
-
+        // serguio
         return null;
 
     }
 
+    //public String generateLocationShareLink(String routeId, Long userId ){
+    //    return null;
+    //}
+    
     @Override
     public Route getRouteInformation(String travelId) {
 
