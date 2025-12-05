@@ -11,6 +11,7 @@ import edu.dosw.rideci.application.events.command.UpdateRouteCommand;
 import edu.dosw.rideci.application.port.in.CalculateRouteWithWayPointsUseCase;
 import edu.dosw.rideci.application.port.in.IsPickUpLocationOnPath;
 import edu.dosw.rideci.application.port.in.MapsServicePort;
+import edu.dosw.rideci.application.port.in.RecalculateETA;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.domain.model.TravelTracking;
@@ -37,6 +38,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     private final IsPickUpLocationOnPath isPickUpLocationOnPathUseCase;
     private final CalculateRouteWithWayPointsUseCase calculateRouteWithWayPointsUseCase;
     private final GeolocationUtils geolocationUtils;
+    private final RecalculateETA recalculateGoogleETA;
 
     @Override
     public Route createRoute(CreateRouteCommand event) {
@@ -107,6 +109,8 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
             route.getPickUpPoints().removeIf(p -> p.getPassengerId().equals(pickUpPoint.getPassengerId()));
             routeRepository.save(route);
         }
+        //CalculareRouteWithWaypoints
+        //RecalculateETA   
     }
 
     @Override
@@ -115,35 +119,21 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
         RouteDocument routeToDelete = routeRepository.findByTravelId(travelId);
 
         routeRepository.delete(routeToDelete);
-
     }
 
     @Override
     public Location updateLocation(String routeId, Location newLocation) {
 
-        RouteDocument route = routeRepository.findById(routeId)
+        RouteDocument routeDoc = routeRepository.findById(routeId)
                 .orElseThrow(() -> new RouteNotFoundException("Route with id: {id} was not found"));
 
-        LocationDocument actualLocation = route.getTravelTracking().getLastLocation();
+        Route route = routeMapper.toDomain(routeDoc);
+        
+        Location actualLocation = route.getTravelTracking().getLastLocation();
 
         if (newLocation.getAccuracy() > 50.0) {
-            return routeMapper.toLocationDomain(actualLocation);
-        }
-
-        double remainingDistance = route.getTravelTracking().getRemainingDistance();
-        if (remainingDistance < 50.0) {
-            // Implementar logica de notificacion
-
-        }
-
-        // double distanceToDest = geoCalculator.calculateDistanceInMeters(
-        // newLocation.getLatitude(),
-        // newLocation.getLongitude(),
-        // route.getDestinationLatitude(),
-        // route.getDestinationLongitude()
-        // );
-
-        // route.getTravelTracking().setRemainingDistance(distanceToDest);
+            return actualLocation != null ? actualLocation : newLocation;
+        }   
 
         Location updatedLocation = Location.builder()
                 .latitude(newLocation.getLatitude())
@@ -153,23 +143,47 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
                 .placeId(newLocation.getPlaceId())
                 .direction(newLocation.getDirection())
                 .accuracy(newLocation.getAccuracy())
-                .build();
-
-        if (remainingDistance < 50.0) {
-            log.info("Driver is arriving. Distance: {} meters", remainingDistance);
+                .build();   
+                
+        if(isPickUpLocationOnPathUseCase.isPickUpLocationOnPath(updatedLocation.getLatitude()
+            , updatedLocation.getLongitude(), routeId, 5000)){
+            log.info("You've deviated more than 5km from the route");
+            //Implementar notificacion
         }
-
-        LocationDocument updatedLocationDocument = routeMapper.toLocationDocumentEmbeddable(updatedLocation);
 
         if (actualLocation != null) {
             route.getTravelTracking().getLocationHistory().add(actualLocation);
         }
-        route.getTravelTracking().setLastLocation(updatedLocationDocument);
+
+        double distanceToDest = geolocationUtils.calculateDistanceInMeters(
+            newLocation.getLatitude(),
+            newLocation.getLongitude(),
+            route.getDestiny().getLatitude(),
+            route.getDestiny().getLongitude()
+        );
+
+        double distanceTraveled = geolocationUtils.calculateDistanceInMeters(
+            route.getOrigin().getLatitude(), 
+            route.getOrigin().getLongitude(), 
+            newLocation.getLatitude(), 
+            newLocation.getLongitude()
+        );
+
+        route.getTravelTracking().setRemainingDistance(distanceToDest);
+        route.getTravelTracking().setLastLocation(updatedLocation);
         route.getTravelTracking().setLastUpdate(LocalDateTime.now());
+        route.getTravelTracking().setDistanceTraveled(distanceTraveled);
 
-        routeRepository.save(route);
+        if (route.getTravelTracking().getRemainingDistance() < 50.0) {
+            log.info("Driver is arriving. Distance: {} meters", route.getTravelTracking().getRemainingDistance());
+        } 
 
-        return updatedLocation;
+        recalculateGoogleETA.recalculateETA(routeId, updatedLocation, route.getDestiny());
+      
+        RouteDocument updatedRouteDoc = routeMapper.toDocument(route);
+        routeRepository.save(updatedRouteDoc);
+
+        return updatedLocation;                                                                                                                                                                                                            
 
     }
 
