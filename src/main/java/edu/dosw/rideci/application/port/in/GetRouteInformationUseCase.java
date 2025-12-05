@@ -4,6 +4,6 @@ import edu.dosw.rideci.domain.model.Route;
 
 public interface GetRouteInformationUseCase {
 
-    Route getRouteInformation(String routeId);
+    Route getRouteInformation(String travelId);
 
 }
