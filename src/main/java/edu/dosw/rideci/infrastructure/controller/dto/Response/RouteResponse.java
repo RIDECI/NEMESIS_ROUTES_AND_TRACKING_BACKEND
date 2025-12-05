@@ -3,10 +3,6 @@ package edu.dosw.rideci.infrastructure.controller.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import edu.dosw.rideci.domain.model.Location;
-import edu.dosw.rideci.domain.model.LocationShare;
-import edu.dosw.rideci.domain.model.PickUpPoint;
-import edu.dosw.rideci.domain.model.TravelTracking;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,9 +14,9 @@ public class RouteResponse {
 
     private String travelId;
 
-    private Location origin;
+    private LocationResponse origin;
 
-    private Location destiny;
+    private LocationResponse destiny;
 
     private double totalDistance;
 
@@ -30,10 +26,6 @@ public class RouteResponse {
 
     private LocalDateTime departureDateAndTime;
 
-    private List<PickUpPoint> pickUpPoints;
-
-    private LocationShare locationShare;
-
-    private TravelTracking travelTracking;
+    private List<PickUpPointResponse> pickUpPoints;
 
 }

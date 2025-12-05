@@ -249,6 +249,10 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
 
         RouteDocument route = routeRepository.findByTravelId(travelId);
 
+        if (route == null) {
+            throw new RouteNotFoundException("Route not found with travelId: " + travelId);
+        }
+
         return routeMapper.toDomain(route);
 
     }
