@@ -13,7 +13,9 @@ import edu.dosw.rideci.application.port.in.IsPickUpLocationOnPath;
 import edu.dosw.rideci.application.port.in.MapsServicePort;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.domain.model.Route;
+import edu.dosw.rideci.domain.model.TravelTracking;
 import edu.dosw.rideci.domain.model.Location;
+import edu.dosw.rideci.domain.model.LocationShare;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.infrastructure.persistance.Entity.LocationDocument;
 import edu.dosw.rideci.infrastructure.persistance.Entity.RouteDocument;
@@ -50,6 +52,8 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
                 .polyline(googleData.getPolyline())
                 .departureDateAndTime(event.getDepartureDateAndTime())
                 .pickUpPoints(new ArrayList<PickUpPoint>())
+                .locationShare(new LocationShare()) //Mirar si no dan null
+                .travelTracking(new TravelTracking()) //Mirar si no dan null
                 .build();
 
         RouteDocument createdRoute = routeMapper.toDocument(route);
@@ -88,9 +92,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
             route.setEstimatedTime(googleData.getEstimatedTime());
             route.setPolyline(googleData.getPolyline());
         }
-
-        // route.setDepartureDateAndTime(newRoute.getDepartureDateAndTime());
-        // route.setPickUpPoints(newRoute.getPickUpPoints());
+        // route.setPickUpPoints(newRoute.getPickUpPoints()); serguio 
 
         RouteDocument updatedRoute = routeMapper.toDocument(route);
         routeRepository.save(updatedRoute);
