@@ -1,6 +1,7 @@
 package edu.dosw.rideci.application.service;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import edu.dosw.rideci.application.events.LocationUpdateEvent;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Primary
 public class UpdateLocationUseCaseImpl implements UpdateLocationUseCase{
 
     private final GeolocalizationRepositoryPort geolocalizationRepositoryPort;
