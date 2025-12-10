@@ -33,7 +33,11 @@ import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.domain.model.Route;
 import edu.dosw.rideci.exceptions.ExternalServiceException;
 import edu.dosw.rideci.infrastructure.config.GoogleMapsConfig;
+import edu.dosw.rideci.infrastructure.persistance.Entity.RouteDocument;
+import edu.dosw.rideci.infrastructure.persistance.mapper.RouteMapper;
+import edu.dosw.rideci.infrastructure.persistance.repository.GeolocationUtils;
 import edu.dosw.rideci.infrastructure.persistance.repository.GoogleMapsAdapter;
+import edu.dosw.rideci.infrastructure.persistance.repository.RouteRepository;
 
 @ExtendWith(MockitoExtension.class)
 class GoogleMapsAdapterTest {
@@ -41,12 +45,19 @@ class GoogleMapsAdapterTest {
     private GoogleMapsConfig googleMapsConfig;
     @Mock
     private GeoApiContext geoApiContext;
+    @Mock
+    private GeolocationUtils geolocationUtils;
+    @Mock
+    private RouteRepository routeRepository;
+    @Mock
+    private RouteMapper routeMapper;
     private GoogleMapsAdapter googleMapsAdapter;
     private Location origin;
     private Location destination;
+
     @BeforeEach
     void setUp() {
-        googleMapsAdapter = new GoogleMapsAdapter(googleMapsConfig, geoApiContext);
+        googleMapsAdapter = new GoogleMapsAdapter(geoApiContext, geolocationUtils, routeRepository, routeMapper);
         origin = Location.builder()
                 .latitude(4.6097)
                 .longitude(-74.0817)
@@ -58,6 +69,7 @@ class GoogleMapsAdapterTest {
                 .direction("Medellín, Colombia")
                 .build();
     }
+
     @Test
     void calculateRoute_shouldReturnRouteWithValidData_whenApiReturnsSuccessfully() throws Exception {
         DirectionsApiRequest mockRequest = mock(DirectionsApiRequest.class);
@@ -73,8 +85,8 @@ class GoogleMapsAdapterTest {
         EncodedPolyline mockPolyline = mock(EncodedPolyline.class);
         when(mockPolyline.getEncodedPath()).thenReturn("encodedPathString");
         mockRoute.overviewPolyline = mockPolyline;
-        mockRoute.legs = new DirectionsLeg[]{mockLeg};
-        mockResult.routes = new DirectionsRoute[]{mockRoute};
+        mockRoute.legs = new DirectionsLeg[] { mockLeg };
+        mockResult.routes = new DirectionsRoute[] { mockRoute };
         try (MockedStatic<DirectionsApi> mockedStatic = mockStatic(DirectionsApi.class)) {
             mockedStatic.when(() -> DirectionsApi.newRequest(any(GeoApiContext.class))).thenReturn(mockRequest);
             when(mockRequest.origin(any(String.class))).thenReturn(mockRequest);
@@ -88,6 +100,7 @@ class GoogleMapsAdapterTest {
             assertThat(result.getPolyline()).isNotNull();
         }
     }
+
     @Test
     void calculateRoute_shouldReturnNull_whenNoRoutesFound() throws Exception {
         DirectionsApiRequest mockRequest = mock(DirectionsApiRequest.class);
@@ -103,6 +116,7 @@ class GoogleMapsAdapterTest {
             assertThat(result).isNull();
         }
     }
+
     @Test
     void calculateRoute_shouldThrowExternalServiceException_whenApiThrowsException() throws Exception {
         DirectionsApiRequest mockRequest = mock(DirectionsApiRequest.class);
@@ -117,13 +131,16 @@ class GoogleMapsAdapterTest {
                     .hasMessageContaining("Error connecting with Google Maps");
         }
     }
+
     @Test
     void calculateRoute_shouldThrowExternalServiceException_whenGeoApiContextIsNull() {
-        GoogleMapsAdapter adapterWithNullContext = new GoogleMapsAdapter(googleMapsConfig, null);
+        GoogleMapsAdapter adapterWithNullContext = new GoogleMapsAdapter(null, geolocationUtils, routeRepository,
+                routeMapper);
         assertThatThrownBy(() -> adapterWithNullContext.calculateRoute(origin, destination))
                 .isInstanceOf(ExternalServiceException.class)
                 .hasMessageContaining("Error connecting with Google Maps");
     }
+
     @Test
     void calculateRoute_shouldHandleNullOriginDirection() {
         Location originWithNullDirection = Location.builder()
@@ -135,6 +152,7 @@ class GoogleMapsAdapterTest {
                 .isInstanceOf(ExternalServiceException.class)
                 .hasMessageContaining("Error connecting with Google Maps");
     }
+
     @Test
     void calculateRoute_shouldThrowIllegalArgumentException_whenDestinationDirectionIsNull() {
         Location destinationWithNullDirection = Location.builder()
@@ -146,6 +164,7 @@ class GoogleMapsAdapterTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Direction cannot be null");
     }
+
     @Test
     void calculateRoute_shouldHandleBothNullDirections() {
         Location originWithNullDirection = Location.builder()
@@ -158,15 +177,19 @@ class GoogleMapsAdapterTest {
                 .longitude(-75.5812)
                 .direction(null)
                 .build();
-        assertThatThrownBy(() -> googleMapsAdapter.calculateRoute(originWithNullDirection, destinationWithNullDirection))
+        assertThatThrownBy(
+                () -> googleMapsAdapter.calculateRoute(originWithNullDirection, destinationWithNullDirection))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Direction cannot be null");
     }
+
     @Test
     void constructor_shouldCreateGoogleMapsAdapter() {
-        GoogleMapsAdapter adapter = new GoogleMapsAdapter(googleMapsConfig, geoApiContext);
+        GoogleMapsAdapter adapter = new GoogleMapsAdapter(geoApiContext, geolocationUtils, routeRepository,
+                routeMapper);
         assertThat(adapter).isNotNull();
     }
+
     @Test
     void calculateRouteWithWayPoints_shouldReturnRouteWithWaypoints_whenApiReturnsSuccessfully() throws Exception {
         List<PickUpPoint> pickUpPoints = new ArrayList<>();
@@ -216,13 +239,12 @@ class GoogleMapsAdapterTest {
         mockDuration3.inSeconds = 5000L;
         mockLeg3.distance = mockDistance3;
         mockLeg3.duration = mockDuration3;
-        mockRoute.legs = new DirectionsLeg[]{mockLeg1, mockLeg2, mockLeg3};
-        mockRoute.waypointOrder = new int[]{0, 1};
+        mockRoute.legs = new DirectionsLeg[] { mockLeg1, mockLeg2, mockLeg3 };
+        mockRoute.waypointOrder = new int[] { 0, 1 };
         EncodedPolyline mockPolyline = mock(EncodedPolyline.class);
         when(mockPolyline.getEncodedPath()).thenReturn("encodedPathString");
         mockRoute.overviewPolyline = mockPolyline;
-        mockResult.routes = new DirectionsRoute[]{mockRoute};
-        when(googleMapsConfig.geoApiContext()).thenReturn(geoApiContext);
+        mockResult.routes = new DirectionsRoute[] { mockRoute };
         try (MockedStatic<DirectionsApi> mockedStatic = mockStatic(DirectionsApi.class)) {
             mockedStatic.when(() -> DirectionsApi.newRequest(any(GeoApiContext.class))).thenReturn(mockRequest);
             when(mockRequest.origin(any(String.class))).thenReturn(mockRequest);
@@ -230,7 +252,6 @@ class GoogleMapsAdapterTest {
             when(mockRequest.mode(any(TravelMode.class))).thenReturn(mockRequest);
             when(mockRequest.waypoints(any(String[].class))).thenReturn(mockRequest);
             when(mockRequest.optimizeWaypoints(true)).thenReturn(mockRequest);
-            when(mockRequest.trafficModel(any())).thenReturn(mockRequest);
             when(mockRequest.await()).thenReturn(mockResult);
             Route result = googleMapsAdapter.calculateRouteWithWayPoints(origin, destination, pickUpPoints);
             assertThat(result).isNotNull();
@@ -243,6 +264,7 @@ class GoogleMapsAdapterTest {
             assertThat(point2.getEstimatedTimeToPick()).isEqualTo(4200L);
         }
     }
+
     @Test
     void calculateRouteWithWayPoints_shouldThrowException_whenWaypointLocationIsNull() {
         List<PickUpPoint> pickUpPoints = new ArrayList<>();
@@ -256,6 +278,7 @@ class GoogleMapsAdapterTest {
                 .isInstanceOf(ExternalServiceException.class)
                 .hasMessageContaining("Error connecting with Google Maps");
     }
+
     @Test
     void calculateRouteWithWayPoints_shouldHandleEmptyPickUpPointsList() throws Exception {
         List<PickUpPoint> emptyPickUpPoints = new ArrayList<>();
@@ -269,12 +292,11 @@ class GoogleMapsAdapterTest {
         mockDuration.inSeconds = 7200L;
         mockLeg.distance = mockDistance;
         mockLeg.duration = mockDuration;
-        mockRoute.legs = new DirectionsLeg[]{mockLeg};
-        mockRoute.waypointOrder = new int[]{};
+        mockRoute.legs = new DirectionsLeg[] { mockLeg };
+        mockRoute.waypointOrder = new int[] {};
         EncodedPolyline mockPolyline = new EncodedPolyline();
         mockRoute.overviewPolyline = mockPolyline;
-        mockResult.routes = new DirectionsRoute[]{mockRoute};
-        when(googleMapsConfig.geoApiContext()).thenReturn(geoApiContext);
+        mockResult.routes = new DirectionsRoute[] { mockRoute };
         try (MockedStatic<DirectionsApi> mockedStatic = mockStatic(DirectionsApi.class)) {
             mockedStatic.when(() -> DirectionsApi.newRequest(any(GeoApiContext.class))).thenReturn(mockRequest);
             when(mockRequest.origin(any(String.class))).thenReturn(mockRequest);
@@ -282,7 +304,6 @@ class GoogleMapsAdapterTest {
             when(mockRequest.mode(any(TravelMode.class))).thenReturn(mockRequest);
             when(mockRequest.waypoints(any(String[].class))).thenReturn(mockRequest);
             when(mockRequest.optimizeWaypoints(true)).thenReturn(mockRequest);
-            when(mockRequest.trafficModel(any())).thenReturn(mockRequest);
             when(mockRequest.await()).thenReturn(mockResult);
             Route result = googleMapsAdapter.calculateRouteWithWayPoints(origin, destination, emptyPickUpPoints);
             assertThat(result).isNotNull();
@@ -290,6 +311,7 @@ class GoogleMapsAdapterTest {
             assertThat(result.getEstimatedTime()).isEqualTo(7200L);
         }
     }
+
     @Test
     void calculateRouteWithWayPoints_shouldReturnNull_whenNoRoutesFound() throws Exception {
         List<PickUpPoint> pickUpPoints = new ArrayList<>();
@@ -307,7 +329,6 @@ class GoogleMapsAdapterTest {
         DirectionsApiRequest mockRequest = mock(DirectionsApiRequest.class);
         DirectionsResult mockResult = new DirectionsResult();
         mockResult.routes = new DirectionsRoute[0];
-        when(googleMapsConfig.geoApiContext()).thenReturn(geoApiContext);
         try (MockedStatic<DirectionsApi> mockedStatic = mockStatic(DirectionsApi.class)) {
             mockedStatic.when(() -> DirectionsApi.newRequest(any(GeoApiContext.class))).thenReturn(mockRequest);
             when(mockRequest.origin(any(String.class))).thenReturn(mockRequest);
@@ -315,12 +336,12 @@ class GoogleMapsAdapterTest {
             when(mockRequest.mode(any(TravelMode.class))).thenReturn(mockRequest);
             when(mockRequest.waypoints(any(String[].class))).thenReturn(mockRequest);
             when(mockRequest.optimizeWaypoints(true)).thenReturn(mockRequest);
-            when(mockRequest.trafficModel(any())).thenReturn(mockRequest);
             when(mockRequest.await()).thenReturn(mockResult);
             Route result = googleMapsAdapter.calculateRouteWithWayPoints(origin, destination, pickUpPoints);
             assertThat(result).isNull();
         }
     }
+
     @Test
     void calculateRouteWithWayPoints_shouldThrowException_whenApiThrowsException() throws Exception {
         List<PickUpPoint> pickUpPoints = new ArrayList<>();
@@ -336,7 +357,6 @@ class GoogleMapsAdapterTest {
                 .build();
         pickUpPoints.add(point1);
         DirectionsApiRequest mockRequest = mock(DirectionsApiRequest.class);
-        when(googleMapsConfig.geoApiContext()).thenReturn(geoApiContext);
         try (MockedStatic<DirectionsApi> mockedStatic = mockStatic(DirectionsApi.class)) {
             mockedStatic.when(() -> DirectionsApi.newRequest(any(GeoApiContext.class))).thenReturn(mockRequest);
             when(mockRequest.origin(any(String.class))).thenReturn(mockRequest);
@@ -344,16 +364,55 @@ class GoogleMapsAdapterTest {
             when(mockRequest.mode(any(TravelMode.class))).thenReturn(mockRequest);
             when(mockRequest.waypoints(any(String[].class))).thenReturn(mockRequest);
             when(mockRequest.optimizeWaypoints(true)).thenReturn(mockRequest);
-            when(mockRequest.trafficModel(any())).thenReturn(mockRequest);
             when(mockRequest.await()).thenThrow(new RuntimeException("API Error"));
             assertThatThrownBy(() -> googleMapsAdapter.calculateRouteWithWayPoints(origin, destination, pickUpPoints))
                     .isInstanceOf(ExternalServiceException.class)
                     .hasMessageContaining("Error connecting with Google Maps");
         }
     }
+
     @Test
-    void recalculateETA_shouldReturnNull() {
-        Long result = googleMapsAdapter.recalculateETA(1000L);
-        assertThat(result).isNull();
+    void recalculateETA_shouldNotThrowException_whenCalculationFails() throws Exception {
+        Location lastLocation = Location.builder().latitude(1.0).longitude(2.0).direction("Location").build();
+        DirectionsApiRequest mockRequest = mock(DirectionsApiRequest.class);
+        DirectionsResult mockResult = new DirectionsResult();
+        DirectionsRoute mockRoute = new DirectionsRoute();
+        DirectionsLeg mockLeg = new DirectionsLeg();
+        Distance mockDistance = new Distance();
+        mockDistance.inMeters = 50000;
+        Duration mockDuration = new Duration();
+        mockDuration.inSeconds = 3600L;
+        mockLeg.distance = mockDistance;
+        mockLeg.duration = mockDuration;
+        mockRoute.legs = new DirectionsLeg[] { mockLeg };
+        EncodedPolyline mockPolyline = mock(EncodedPolyline.class);
+        when(mockPolyline.getEncodedPath()).thenReturn("encodedPathString");
+        mockRoute.overviewPolyline = mockPolyline;
+        mockResult.routes = new DirectionsRoute[] { mockRoute };
+
+        // Mock routeRepository.findById() to return a RouteDocument
+        RouteDocument mockRouteDocument = mock(RouteDocument.class);
+        when(routeRepository.findById("route-1")).thenReturn(java.util.Optional.of(mockRouteDocument));
+
+        // Mock routeMapper.toDomain() to return a Route
+        Route mockRouteEntity = mock(Route.class);
+        when(routeMapper.toDomain(mockRouteDocument)).thenReturn(mockRouteEntity);
+
+        // Mock routeMapper.toDocument() to return a RouteDocument
+        RouteDocument updatedRouteDocument = mock(RouteDocument.class);
+        when(routeMapper.toDocument(mockRouteEntity)).thenReturn(updatedRouteDocument);
+
+        // Mock routeRepository.save()
+        when(routeRepository.save(updatedRouteDocument)).thenReturn(updatedRouteDocument);
+
+        try (MockedStatic<DirectionsApi> mockedStatic = mockStatic(DirectionsApi.class)) {
+            mockedStatic.when(() -> DirectionsApi.newRequest(any(GeoApiContext.class))).thenReturn(mockRequest);
+            when(mockRequest.origin(any(String.class))).thenReturn(mockRequest);
+            when(mockRequest.destination(any(String.class))).thenReturn(mockRequest);
+            when(mockRequest.mode(any(TravelMode.class))).thenReturn(mockRequest);
+            when(mockRequest.await()).thenReturn(mockResult);
+            googleMapsAdapter.recalculateETA("route-1", lastLocation, destination);
+            // Si llega aquí sin lanzar excepciones, el test pasa
+        }
     }
 }

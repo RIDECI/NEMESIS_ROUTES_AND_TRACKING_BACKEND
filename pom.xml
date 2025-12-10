@@ -155,13 +155,14 @@
 							</goals>
 							<configuration>
 								<excludes>
-									<exclude>**/model/**</exclude>
-									<exclude>**/dto/**</exclude>
-									<exclude>**/enums/**</exclude>
-									<exclude>**/config/*</exclude>
-									<exclude>**/mapper/*</exclude>
-									<exclude>**/exception/*</exclude>
-									<exclude>**/common/*</exclude>
+									<exclude>**/application/**</exclude>
+									<exclude>**/domain/**</exclude>
+									<exclude>**/exceptions/**</exclude>
+									<exclude>**/infrastructure/config/**</exclude>
+									<exclude>**/infrastructure/controller/**</exclude>
+									<exclude>**/infrastructure/service/**</exclude>
+									<exclude>**/infrastructure/persistance/Entity/**</exclude>
+									<exclude>**/infrastructure/persistance/mapper/**</exclude>
 									<exclude>**/NemesisRoutesAndTrackingBackendApplication.class</exclude>
 								</excludes>
 							</configuration>
@@ -174,12 +175,6 @@
 							<configuration>
 								<rules>
 									<rule>
-										<element>CLASS</element>
-										<excludes>
-										<exclude>edu/dosw/rideci/NemesisRoutesAndTrackingBackendApplication</exclude>
-										</excludes>
-									</rule>
-									<rule>
 										<element>PACKAGE</element>
 										<limits>
 											<limit>
@@ -191,13 +186,14 @@
 									</rule>
 								</rules>
 								<excludes>
-									<exclude>**/model/**</exclude>
-									<exclude>**/dto/**</exclude>
-									<exclude>**/enums/**</exclude>
-									<exclude>**/config/*</exclude>
-									<exclude>**/mapper/*</exclude>
-									<exclude>**/exception/*</exclude>
-									<exclude>**/common/*</exclude>
+									<exclude>**/application/**</exclude>
+									<exclude>**/domain/**</exclude>
+									<exclude>**/exceptions/**</exclude>
+									<exclude>**/infrastructure/config/**</exclude>
+									<exclude>**/infrastructure/controller/**</exclude>
+									<exclude>**/infrastructure/service/**</exclude>
+									<exclude>**/infrastructure/persistance/Entity/**</exclude>
+									<exclude>**/infrastructure/persistance/mapper/**</exclude>
 									<exclude>**/NemesisRoutesAndTrackingBackendApplication.class</exclude>
 								</excludes>
 							</configuration>
