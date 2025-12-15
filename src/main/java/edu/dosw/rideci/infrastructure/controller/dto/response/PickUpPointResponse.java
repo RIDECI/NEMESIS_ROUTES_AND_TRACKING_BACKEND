@@ -1,18 +1,18 @@
-package edu.dosw.rideci.infrastructure.persistance.Entity;
+package edu.dosw.rideci.infrastructure.controller.dto.response;
 
-
+import edu.dosw.rideci.domain.model.Location;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class PickupPointDocument {
+public class PickUpPointResponse {
 
     private Long passengerId;
 
     private double distanceFromPreviousStop;
 
-    private LocationDocument passengerLocation;
+    private Location passengerLocation;
 
     private Long estimatedTimeToPick;
 

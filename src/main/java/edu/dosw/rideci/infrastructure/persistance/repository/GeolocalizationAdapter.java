@@ -1,30 +1,30 @@
 package edu.dosw.rideci.infrastructure.persistance.repository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.rabbitmq.client.Return;
-
 import edu.dosw.rideci.application.events.command.CreateRouteCommand;
 import edu.dosw.rideci.application.events.command.UpdateRouteCommand;
 import edu.dosw.rideci.application.port.in.CalculateRouteWithWayPointsUseCase;
+import edu.dosw.rideci.application.port.in.IsPickUpLocationOnPath;
 import edu.dosw.rideci.application.port.in.MapsServicePort;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;
 import edu.dosw.rideci.domain.model.Route;
-import edu.dosw.rideci.domain.model.TrackingConfiguration;
+import edu.dosw.rideci.domain.model.TravelTracking;
 import edu.dosw.rideci.domain.model.Location;
+import edu.dosw.rideci.domain.model.LocationShare;
 import edu.dosw.rideci.domain.model.PickUpPoint;
 import edu.dosw.rideci.infrastructure.persistance.Entity.LocationDocument;
 import edu.dosw.rideci.infrastructure.persistance.Entity.RouteDocument;
-import edu.dosw.rideci.infrastructure.persistance.Entity.TravelTrackingDocument;
 import edu.dosw.rideci.infrastructure.persistance.mapper.RouteMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import edu.dosw.rideci.exceptions.RouteNotFoundException;
 import edu.dosw.rideci.exceptions.TimeOutException;
-import edu.dosw.rideci.exceptions.ExternalServiceException;
+import edu.dosw.rideci.exceptions.InvalidPickUpPointException;
 
 @RequiredArgsConstructor
 @Repository
@@ -34,12 +34,12 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     private final RouteRepository routeRepository;
     private final RouteMapper routeMapper;
     private final MapsServicePort mapsServicePort;
+    private final IsPickUpLocationOnPath isPickUpLocationOnPathUseCase;
     private final CalculateRouteWithWayPointsUseCase calculateRouteWithWayPointsUseCase;
+    private final GeolocationUtils geolocationUtils;
 
     @Override
     public Route createRoute(CreateRouteCommand event) {
-        System.out.println(event.getOrigin().getDirection());
-        System.out.println(event.getDestiny().getDirection());
 
         Route googleData = mapsServicePort.calculateRoute(event.getOrigin(), event.getDestiny());
 
@@ -51,7 +51,9 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
                 .estimatedTime(googleData.getEstimatedTime())
                 .polyline(googleData.getPolyline())
                 .departureDateAndTime(event.getDepartureDateAndTime())
-                .pickUpPoints(null)
+                .pickUpPoints(new ArrayList<PickUpPoint>())
+                .locationShare(new LocationShare()) //Mirar si no dan null
+                .travelTracking(new TravelTracking()) //Mirar si no dan null
                 .build();
 
         RouteDocument createdRoute = routeMapper.toDocument(route);
@@ -90,9 +92,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
             route.setEstimatedTime(googleData.getEstimatedTime());
             route.setPolyline(googleData.getPolyline());
         }
-
-        // route.setDepartureDateAndTime(newRoute.getDepartureDateAndTime());
-        // route.setPickUpPoints(newRoute.getPickUpPoints());
+        // route.setPickUpPoints(newRoute.getPickUpPoints()); serguio 
 
         RouteDocument updatedRoute = routeMapper.toDocument(route);
         routeRepository.save(updatedRoute);
@@ -101,40 +101,39 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
     }
 
     @Override
+    public void removePickUpPoint(String routeId, PickUpPoint pickUpPoint) {
+        RouteDocument routeDoc = routeRepository.findByTravelId(routeId);
+        Route route = routeMapper.toDomain(routeDoc);
+
+        if (routeDoc != null && route.getPickUpPoints() != null) {
+            route.getPickUpPoints().removeIf(p -> p.getPassengerId().equals(pickUpPoint.getPassengerId()));
+            routeRepository.save(routeDoc);
+        }
+
+        calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(), route.getDestiny(), route.getPickUpPoints());
+    }
+
+    @Override
     public void deleteRoute(String travelId) {
 
         RouteDocument routeToDelete = routeRepository.findByTravelId(travelId);
 
         routeRepository.delete(routeToDelete);
-
     }
 
     @Override
     public Location updateLocation(String routeId, Location newLocation) {
 
-        RouteDocument route = routeRepository.findById(routeId)
+        RouteDocument routeDoc = routeRepository.findById(routeId)
                 .orElseThrow(() -> new RouteNotFoundException("Route with id: {id} was not found"));
 
-        LocationDocument actualLocation = route.getTravelTracking().getLastLocation();
+        Route route = routeMapper.toDomain(routeDoc);
+        
+        Location actualLocation = route.getTravelTracking().getLastLocation();
 
         if (newLocation.getAccuracy() > 50.0) {
-            return routeMapper.toLocationDomain(actualLocation);
-        }
-
-        double remainingDistance = route.getTravelTracking().getRemainingDistance();
-        if (remainingDistance < 50.0) {
-            // Implementar logica de notificacion
-
-        }
-
-        // double distanceToDest = geoCalculator.calculateDistanceInMeters(
-        // newLocation.getLatitude(),
-        // newLocation.getLongitude(),
-        // route.getDestinationLatitude(),
-        // route.getDestinationLongitude()
-        // );
-
-        // route.getTravelTracking().setRemainingDistance(distanceToDest);
+            return actualLocation != null ? actualLocation : newLocation;
+        }   
 
         Location updatedLocation = Location.builder()
                 .latitude(newLocation.getLatitude())
@@ -144,17 +143,45 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
                 .placeId(newLocation.getPlaceId())
                 .direction(newLocation.getDirection())
                 .accuracy(newLocation.getAccuracy())
-                .build();
+                .build();   
+                
+        if(isPickUpLocationOnPathUseCase.isPickUpLocationOnPath(updatedLocation.getLatitude()
+            , updatedLocation.getLongitude(), routeId, 5000)){
+            log.info("You've deviated more than 5km from the route");
+            //Implementar notificacion
+        }
 
-        LocationDocument updatedLocationDocument = routeMapper.toLocationDocumentEmbeddable(updatedLocation);
+        if (actualLocation != null) {
+            route.getTravelTracking().getLocationHistory().add(actualLocation);
+        }
 
-        route.getTravelTracking().getLocationHistory().add(actualLocation);
-        route.getTravelTracking().setLastLocation(updatedLocationDocument);
+        double distanceToDest = geolocationUtils.calculateDistanceInMeters(
+            newLocation.getLatitude(),
+            newLocation.getLongitude(),
+            route.getDestiny().getLatitude(),
+            route.getDestiny().getLongitude()
+        );
+
+        double distanceTraveled = geolocationUtils.calculateDistanceInMeters(
+            route.getOrigin().getLatitude(), 
+            route.getOrigin().getLongitude(), 
+            newLocation.getLatitude(), 
+            newLocation.getLongitude()
+        );
+
+        route.getTravelTracking().setRemainingDistance(distanceToDest);
+        route.getTravelTracking().setLastLocation(updatedLocation);
         route.getTravelTracking().setLastUpdate(LocalDateTime.now());
+        route.getTravelTracking().setDistanceTraveled(distanceTraveled);
 
-        routeRepository.save(route);
+        if (route.getTravelTracking().getRemainingDistance() < 50.0) {
+            log.info("Driver is arriving. Distance: {} meters", route.getTravelTracking().getRemainingDistance());
+        } 
+      
+        RouteDocument updatedRouteDoc = routeMapper.toDocument(route);
+        routeRepository.save(updatedRouteDoc);
 
-        return updatedLocation;
+        return updatedLocation;                                                                                                                                                                                                            
 
     }
 
@@ -178,6 +205,14 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
                 .order(newPickUpPoint.getOrder())
                 .build();
 
+        boolean isPickUpLocationOnPath = isPickUpLocationOnPathUseCase.isPickUpLocationOnPath(
+                newPickUpPoint.getPassengerLocation().getLatitude(),
+                newPickUpPoint.getPassengerLocation().getLongitude(), route.getPolyline(), 100.0);
+
+        if (!isPickUpLocationOnPath) {
+            throw new InvalidPickUpPointException("The pick up point choosed is not valid for the route");
+        }
+
         route.getPickUpPoints().add(newPoint);
 
         Route recalculatedRoute = calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(),
@@ -189,7 +224,7 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
 
         routeRepository.save(routeMapper.toDocument(route));
 
-        return newPoint;
+        return newPickUpPoint;
     }
 
     @Override
@@ -204,20 +239,37 @@ public class GeolocalizationAdapter implements GeolocalizationRepositoryPort {
             throw new TimeOutException("Cannot edit after passed 30 minutes before the travel start");
         }
 
-        Route recalculatedRoute = calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(),
-                route.getDestiny(), route.getPickUpPoints());
+        PickUpPoint pickUpPoint = route.getPickUpPoints().stream()
+                .filter(p -> p.getPassengerId().equals(updatedPickUpPoint.getPassengerId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "PickUpPoint for passenger " + updatedPickUpPoint.getPassengerId() + " not found"));
+
+        pickUpPoint.setPassengerLocation(updatedPickUpPoint.getPassengerLocation());
+        pickUpPoint.setDistanceFromPreviousStop(updatedPickUpPoint.getDistanceFromPreviousStop());
+        pickUpPoint.setEstimatedTimeToPick(updatedPickUpPoint.getEstimatedTimeToPick());
+
+        //Route recalculatedRoute = calculateRouteWithWayPointsUseCase.calculateRouteWithWayPoints(route.getOrigin(),
+        //        route.getDestiny(), route.getPickUpPoints());
 
         // PickUpPoint pickUpPoint = route.getPickUpPoints()
-
+        // serguio
         return null;
 
     }
 
+    //public String generateLocationShareLink(String routeId, Long userId ){
+    //    return null;
+    //}
+    
     @Override
-    public Route getRouteInformation(String routeId) {
+    public Route getRouteInformation(String travelId) {
 
-        RouteDocument route = routeRepository.findById(routeId)
-                .orElseThrow(() -> new RouteNotFoundException("Route not found with id: {id}"));
+        RouteDocument route = routeRepository.findByTravelId(travelId);
+
+        if (route == null) {
+            throw new RouteNotFoundException("Route not found with travelId: " + travelId);
+        }
 
         return routeMapper.toDomain(route);
 

@@ -10,8 +10,11 @@ public interface GoogleMapsRepositoryPort {
 
     Route calculateRoute(Location origin, Location destiny);
 
-    Long recalculateETA(Long newETA);
+    void recalculateETA(String routeId, Location lastLocation, Location destiny);
 
     Route calculateRouteWithWayPoints(Location origin, Location destiny, List<PickUpPoint> pickUpPoints);
 
+    boolean isPickUpLocationOnPath(double pickUpPointLat, double pickUpPointLon, String encodedPolyline, double toleranceMeters);
+
+    void scheduledEtaRecalculation();
 }

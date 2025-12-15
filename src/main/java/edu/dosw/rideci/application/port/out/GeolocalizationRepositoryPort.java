@@ -12,7 +12,7 @@ public interface GeolocalizationRepositoryPort {
 
     Route createRoute(CreateRouteCommand event);
 
-    Route getRouteInformation(String routeId);
+    Route getRouteInformation(String travelId);
 
     List<PickUpPoint> getPickUpPoints(String routeId);
 
@@ -27,6 +27,8 @@ public interface GeolocalizationRepositoryPort {
     PickUpPoint addPickUpPoint(String routeId, PickUpPoint newPickUpPoint);
 
     PickUpPoint updatePickUpPoint(String routeId, PickUpPoint updatedPickUpPoint);
+
+    void removePickUpPoint(String routeId, PickUpPoint pickUpPoint);
 
     void deleteRoute(String travelId);
 }

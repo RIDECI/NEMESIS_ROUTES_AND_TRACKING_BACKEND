@@ -1,10 +1,7 @@
-package edu.dosw.rideci.infrastructure.persistance.Entity;
+package edu.dosw.rideci.infrastructure.controller.dto.request;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import edu.dosw.rideci.domain.model.enums.ShareStatus;
 import lombok.Builder;
@@ -12,15 +9,11 @@ import lombok.Data;
 
 @Data
 @Builder
-@Document(collection = "locationShare")
-public class LocationShareDocument {
-
-    @Id
-    private String id;
+public class LocationShareRequest {
 
     private Long userId;
 
-    private Long travelId;
+    private String travelId;
 
     private List<String> emergencyContacts;
 
