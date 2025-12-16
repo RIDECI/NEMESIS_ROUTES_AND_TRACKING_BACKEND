@@ -342,11 +342,11 @@ mvn spring-boot:run
 
 # 🧪 Testing
 
-Testing is a essential part of the project functionability, this part will show the code coverage and code quality analazing with tools like JaCoCo and SonarQube.
+Testing is a essential part of the project functionability, this part will show the code coverage and code quality analazing with tools like JaCoCo and SonarQe.
 
 ### 📊 Code Coverage (JaCoCo)
 ---
-![JaCoCo](url.png)
+![JaCoCo](./docs/Jacoco.png)
 
 
 ### 🔍 Static Analysis (SonarQube)

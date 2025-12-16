@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import edu.dosw.rideci.application.dto.TravelCreatedEvent;
 import edu.dosw.rideci.application.events.command.CreateRouteCommand;
 import edu.dosw.rideci.application.events.command.UpdateRouteCommand;
 import edu.dosw.rideci.application.port.in.AddPickUpPointUseCase;
@@ -13,7 +12,6 @@ import edu.dosw.rideci.application.port.in.DeleteRouteUseCase;
 import edu.dosw.rideci.application.port.in.GetPickUpPointsUseCase;
 import edu.dosw.rideci.application.port.in.GetRealTimePositionUseCase;
 import edu.dosw.rideci.application.port.in.GetRouteInformationUseCase;
-import edu.dosw.rideci.application.port.in.MapsServicePort;
 import edu.dosw.rideci.application.port.in.RemovePickUpPointUseCase;
 import edu.dosw.rideci.application.port.in.UpdateConfigurableIntervalUseCase;
 import edu.dosw.rideci.application.port.out.GeolocalizationRepositoryPort;

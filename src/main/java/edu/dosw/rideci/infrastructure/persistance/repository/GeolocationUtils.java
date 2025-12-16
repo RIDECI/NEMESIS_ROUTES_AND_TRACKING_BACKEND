@@ -1,11 +1,9 @@
 package edu.dosw.rideci.infrastructure.persistance.repository;
 
-import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.google.maps.internal.PolylineEncoding;
-import com.google.maps.model.LatLng;
+
 
 @Component
 public class GeolocationUtils {
