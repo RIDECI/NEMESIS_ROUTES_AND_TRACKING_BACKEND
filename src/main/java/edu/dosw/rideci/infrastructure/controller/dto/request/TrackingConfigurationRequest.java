@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class TrackingConfigurationRequest {
-    
+
     private int updateIntervalSeconds;
 
     private boolean shareLocationByDefault;

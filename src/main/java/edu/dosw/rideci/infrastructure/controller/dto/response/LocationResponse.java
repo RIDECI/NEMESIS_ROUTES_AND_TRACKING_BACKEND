@@ -1,6 +1,5 @@
 package edu.dosw.rideci.infrastructure.controller.dto.response;
 
-
 import lombok.Builder;
 import lombok.Data;
 
