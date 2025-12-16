@@ -1,12 +1,12 @@
-package edu.dosw.rideci.infrastructure.controller.dto.Request;
+package edu.dosw.rideci.infrastructure.controller.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class TrackingConfigurationRequest {
-    
+public class TrackingConfigurationResponse {
+
     private int updateIntervalSeconds;
 
     private boolean shareLocationByDefault;

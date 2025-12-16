@@ -1,4 +1,4 @@
-package edu.dosw.rideci.infrastructure.controller.dto.Response;
+package edu.dosw.rideci.infrastructure.controller.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;

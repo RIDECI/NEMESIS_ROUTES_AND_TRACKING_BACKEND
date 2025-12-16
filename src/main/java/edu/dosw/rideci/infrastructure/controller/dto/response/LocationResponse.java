@@ -1,7 +1,5 @@
 package edu.dosw.rideci.infrastructure.controller.dto.response;
 
-import java.time.LocalDateTime;
-
 import lombok.Builder;
 import lombok.Data;
 
